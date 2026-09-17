@@ -64,15 +64,16 @@ export const useApi = () => {
 
   // === ПОЛЬЗОВАТЕЛЬ ===
   const getMe = async (token: string): Promise<User> => {
-    const response = await fetch(`${API_BASE_URL}/users/me`, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    if (!response.ok) {
-      const error = await response.json();
-      throw new Error(error.message || 'Ошибка загрузки профиля');
-    }
-    return response.json();
-  };
+  const response = await fetch(`${API_BASE_URL}/users/me`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.message || 'Ошибка загрузки профиля');
+  }
+  const data = await response.json();
+  return data.user || data;
+};
 
   const addCourse = async (courseId: string, token: string) => {
     const response = await fetch(`${API_BASE_URL}/users/me/courses`, {

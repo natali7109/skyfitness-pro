@@ -196,11 +196,6 @@ const validateForm = (): boolean => {
 
 // Отправка формы
 const handleSubmit = async () => {
-console.log('🔥 handleSubmit вызван') // <-- добавь это
-  console.log('📧 email:', email.value) // <-- и это
-  console.log('🔑 password:', password.value) // <-- и это
-  console.log('✅ validateForm:', validateForm()) // <-- и это
-  
   apiError.value = null
   successMessage.value = null
 
