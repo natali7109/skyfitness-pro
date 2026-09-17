@@ -53,14 +53,16 @@ export const useApi = () => {
     return response.json();
   };
 
-  const getCourseWorkouts = async (courseId: string): Promise<Workout[]> => {
-    const response = await fetch(`${API_BASE_URL}/courses/${courseId}/workouts`);
-    if (!response.ok) {
-      const error = await response.json();
-      throw new Error(error.message || 'Ошибка загрузки тренировок');
-    }
-    return response.json();
-  };
+  const getCourseWorkouts = async (courseId: string, token: string): Promise<Workout[]> => {
+  const response = await fetch(`${API_BASE_URL}/courses/${courseId}/workouts`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.message || 'Ошибка загрузки тренировок');
+  }
+  return response.json();
+};
 
   // === ПОЛЬЗОВАТЕЛЬ ===
   const getMe = async (token: string): Promise<User> => {

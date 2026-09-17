@@ -70,7 +70,7 @@
           </div>
         </div>
 
-        <div class="bg-white rounded-2xl shadow-md p-6">
+        <div class="bg-white rounded-2xl shadow-md p-6 mb-8">
           <button
             @click="handleCourseAction"
             :disabled="actionLoading"
@@ -78,6 +78,34 @@
           >
             {{ actionLoading ? 'Загрузка...' : buttonText }}
           </button>
+        </div>
+
+        <!-- Тренировки (только если курс добавлен) -->
+        <div v-if="isCourseAdded" class="bg-white rounded-2xl shadow-md p-6">
+          <h2 class="text-xl font-semibold text-gray-900 mb-4">Тренировки</h2>
+
+          <div v-if="workoutsLoading" class="text-gray-500">Загрузка тренировок...</div>
+
+          <ul v-else class="space-y-3">
+            <li
+              v-for="(workout, index) in workouts"
+              :key="workout._id"
+              class="flex items-center justify-between py-3 border-b border-gray-100 last:border-0"
+            >
+              <div class="flex items-center gap-3">
+                <span class="w-6 h-6 rounded-full bg-primary text-black flex items-center justify-center text-sm font-medium">
+                  {{ index + 1 }}
+                </span>
+                <span class="text-gray-700">{{ workout.name }}</span>
+              </div>
+              <NuxtLink
+                :to="`/training/${workout._id}?courseId=${course._id}`"
+                class="text-primary hover:text-primary-hover font-medium text-sm transition"
+              >
+                Начать →
+              </NuxtLink>
+            </li>
+          </ul>
         </div>
       </div>
     </div>
@@ -88,9 +116,9 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, onMounted } from 'vue'
+import { computed, ref, onMounted, watch } from 'vue'
 import { useRoute } from 'vue-router'
-import type { Course } from '~/types/api'
+import type { Course, Workout } from '~/types/api'
 import { useUserStore } from '~/stores/user'
 import AuthModal from '~/components/auth/AuthModal.vue'
 
@@ -99,7 +127,9 @@ const userStore = useUserStore()
 const api = useApi()
 
 const course = ref<Course | null>(null)
+const workouts = ref<Workout[]>([])
 const loading = ref(true)
+const workoutsLoading = ref(false)
 const error = ref<string | null>(null)
 const isAuthModalOpen = ref(false)
 const actionLoading = ref(false)
@@ -130,10 +160,24 @@ const loadCourse = async () => {
     const id = route.params.id as string
     const data = await api.getCourseById(id)
     course.value = data
+    await loadWorkouts()
   } catch (err: any) {
     error.value = err.message || 'Не удалось загрузить курс'
   } finally {
     loading.value = false
+  }
+}
+
+const loadWorkouts = async () => {
+  if (!course.value || !isCourseAdded.value || !userStore.token) return
+  try {
+    workoutsLoading.value = true
+    const data = await api.getCourseWorkouts(course.value._id, userStore.token)
+    workouts.value = data
+  } catch (err: any) {
+    console.error('Ошибка загрузки тренировок:', err.message)
+  } finally {
+    workoutsLoading.value = false
   }
 }
 
@@ -149,11 +193,13 @@ const handleCourseAction = async () => {
   try {
     if (isCourseAdded.value) {
       await api.deleteCourse(course.value._id, userStore.token)
+      workouts.value = []
     } else {
       await api.addCourse(course.value._id, userStore.token)
     }
     const user = await api.getMe(userStore.token)
     userStore.setUser(user)
+    await loadWorkouts()
   } catch (err: any) {
     console.error('Ошибка:', err.message)
   } finally {
@@ -167,11 +213,17 @@ const handleAuthSuccess = async () => {
       await api.addCourse(course.value._id, userStore.token)
       const user = await api.getMe(userStore.token)
       userStore.setUser(user)
+      await loadWorkouts()
     } catch (err: any) {
       console.error('Ошибка добавления курса:', err.message)
     }
   }
 }
+
+// Следим за изменением курса
+watch(isCourseAdded, (added) => {
+  if (added) loadWorkouts()
+})
 
 onMounted(() => {
   loadCourse()
