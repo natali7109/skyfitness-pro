@@ -1,75 +1,94 @@
 import type { Course, Workout, User, LoginResponse } from '../types/api';
 
 export const useApi = () => {
-  const baseURL = '/api/fitness';
+  // Базовый URL для авторизации (логин и регистрация)
+  const AUTH_BASE_URL = 'https://wedev-api.sky.pro';
 
+  // Базовый URL для всего остального (курсы, прогресс, пользователь)
+  const API_BASE_URL = 'https://wedev-api.sky.pro/api/fitness';
+
+  // === АВТОРИЗАЦИЯ ===
   const register = async (email: string, password: string) => {
-    const response = await fetch(`${baseURL}/auth/register`, {
+    const response = await fetch(`${AUTH_BASE_URL}/api/fitness/auth/register`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email, password }),
     });
+
     if (!response.ok) {
       const error = await response.json();
       throw new Error(error.message || 'Ошибка регистрации');
     }
+
     return response.json();
   };
 
   const login = async (email: string, password: string) => {
-    const response = await fetch(`${baseURL}/auth/login`, {
+    const response = await fetch(`${AUTH_BASE_URL}/api/fitness/auth/login`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email, password }),
     });
+
     if (!response.ok) {
       const error = await response.json();
       throw new Error(error.message || 'Ошибка входа');
     }
+
     const data: LoginResponse = await response.json();
     return data.token;
   };
 
+  // === КУРСЫ ===
   const getCourses = async (): Promise<Course[]> => {
-    const response = await fetch(`${baseURL}/courses`);
+    const response = await fetch(`${API_BASE_URL}/courses`);
+
     if (!response.ok) {
       const error = await response.json();
       throw new Error(error.message || 'Ошибка загрузки курсов');
     }
+
     return response.json();
   };
 
   const getCourseById = async (id: string): Promise<Course> => {
-    const response = await fetch(`${baseURL}/courses/${id}`);
+    const response = await fetch(`${API_BASE_URL}/courses/${id}`);
+
     if (!response.ok) {
       const error = await response.json();
       throw new Error(error.message || 'Курс не найден');
     }
+
     return response.json();
   };
 
   const getCourseWorkouts = async (courseId: string): Promise<Workout[]> => {
-    const response = await fetch(`${baseURL}/courses/${courseId}/workouts`);
+    const response = await fetch(`${API_BASE_URL}/courses/${courseId}/workouts`);
+
     if (!response.ok) {
       const error = await response.json();
       throw new Error(error.message || 'Ошибка загрузки тренировок');
     }
+
     return response.json();
   };
 
+  // === ПОЛЬЗОВАТЕЛЬ ===
   const getMe = async (token: string): Promise<User> => {
-    const response = await fetch(`${baseURL}/users/me`, {
+    const response = await fetch(`${API_BASE_URL}/users/me`, {
       headers: { Authorization: `Bearer ${token}` },
     });
+
     if (!response.ok) {
       const error = await response.json();
       throw new Error(error.message || 'Ошибка загрузки профиля');
     }
+
     return response.json();
   };
 
   const addCourse = async (courseId: string, token: string) => {
-    const response = await fetch(`${baseURL}/users/me/courses`, {
+    const response = await fetch(`${API_BASE_URL}/users/me/courses`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -77,34 +96,54 @@ export const useApi = () => {
       },
       body: JSON.stringify({ courseId }),
     });
+
     if (!response.ok) {
       const error = await response.json();
       throw new Error(error.message || 'Ошибка добавления курса');
     }
+
     return response.json();
   };
 
   const deleteCourse = async (courseId: string, token: string) => {
-    const response = await fetch(`${baseURL}/users/me/courses/${courseId}`, {
+    const response = await fetch(`${API_BASE_URL}/users/me/courses/${courseId}`, {
       method: 'DELETE',
       headers: { Authorization: `Bearer ${token}` },
     });
+
     if (!response.ok) {
       const error = await response.json();
       throw new Error(error.message || 'Ошибка удаления курса');
     }
+
     return response.json();
   };
 
-  const getProgress = async (courseId: string, workoutId: string, token: string) => {
-    const response = await fetch(
-      `${baseURL}/users/me/progress?courseId=${courseId}&workoutId=${workoutId}`,
-      { headers: { Authorization: `Bearer ${token}` } }
-    );
+  // === ПРОГРЕСС ===
+  const getProgress = async (courseId: string, token: string) => {
+    const response = await fetch(`${API_BASE_URL}/users/me/progress?courseId=${courseId}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+
     if (!response.ok) {
       const error = await response.json();
       throw new Error(error.message || 'Ошибка загрузки прогресса');
     }
+
+    return response.json();
+  };
+
+  const getWorkoutProgress = async (courseId: string, workoutId: string, token: string) => {
+    const response = await fetch(
+      `${API_BASE_URL}/users/me/progress?courseId=${courseId}&workoutId=${workoutId}`,
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.message || 'Ошибка загрузки прогресса тренировки');
+    }
+
     return response.json();
   };
 
@@ -114,7 +153,7 @@ export const useApi = () => {
     progressData: number[],
     token: string
   ) => {
-    const response = await fetch(`${baseURL}/courses/${courseId}/workouts/${workoutId}`, {
+    const response = await fetch(`${API_BASE_URL}/courses/${courseId}/workouts/${workoutId}`, {
       method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',
@@ -122,22 +161,26 @@ export const useApi = () => {
       },
       body: JSON.stringify({ progressData }),
     });
+
     if (!response.ok) {
       const error = await response.json();
       throw new Error(error.message || 'Ошибка обновления прогресса');
     }
+
     return response.json();
   };
 
-  const resetProgress = async (courseId: string, workoutId: string, token: string) => {
-    const response = await fetch(
-      `${baseURL}/courses/${courseId}/workouts/${workoutId}/reset`,
-      { method: 'PATCH', headers: { Authorization: `Bearer ${token}` } }
-    );
+  const resetCourseProgress = async (courseId: string, token: string) => {
+    const response = await fetch(`${API_BASE_URL}/courses/${courseId}/reset`, {
+      method: 'PATCH',
+      headers: { Authorization: `Bearer ${token}` },
+    });
+
     if (!response.ok) {
       const error = await response.json();
-      throw new Error(error.message || 'Ошибка сброса прогресса');
+      throw new Error(error.message || 'Ошибка сброса прогресса курса');
     }
+
     return response.json();
   };
 
@@ -151,7 +194,8 @@ export const useApi = () => {
     addCourse,
     deleteCourse,
     getProgress,
+    getWorkoutProgress,
     updateProgress,
-    resetProgress,
+    resetCourseProgress,
   };
 };
