@@ -63,28 +63,37 @@
           </div>
         </div>
 
-        <!-- Кнопка "Добавить курс" -->
+        <!-- Кнопка действия -->
         <div class="bg-white rounded-2xl shadow-md p-6">
           <button
-            @click="handleAddCourse"
-            class="w-full sm:w-auto px-8 py-3 rounded-full bg-primary hover:bg-primary-hover text-black font-medium transition"
+            @click="handleCourseAction"
+            :disabled="loading"
+            class="w-full sm:w-auto px-8 py-3 rounded-full bg-primary hover:bg-primary-hover text-black font-medium transition disabled:opacity-50"
           >
             {{ buttonText }}
           </button>
         </div>
       </div>
     </div>
+
+    <!-- Модальное окно авторизации -->
+    <AuthModal v-model="isAuthModalOpen" @success="handleAuthSuccess" />
   </div>
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import { mockCourses } from '~/utils/mockCourses'
 import { useUserStore } from '~/stores/user'
+import AuthModal from '~/components/auth/AuthModal.vue'
 
 const route = useRoute()
 const userStore = useUserStore()
+const api = useApi()
+
+const isAuthModalOpen = ref(false)
+const loading = ref(false)
 
 const course = computed(() => {
   const id = route.params.id as string
@@ -97,7 +106,7 @@ const isCourseAdded = computed(() => {
 
 const buttonText = computed(() => {
   if (!userStore.isAuthenticated) return 'Войдите, чтобы добавить курс'
-  if (isCourseAdded.value) return 'Перейти к тренировкам'
+  if (isCourseAdded.value) return 'Удалить курс'
   return 'Добавить курс'
 })
 
@@ -110,12 +119,49 @@ const difficultyClass = (difficulty: string) => {
   return map[difficulty] || 'bg-gray-100 text-gray-800'
 }
 
-const handleAddCourse = () => {
+// Обработка клика на кнопку
+const handleCourseAction = async () => {
+  // Если не авторизован — открываем модалку
   if (!userStore.isAuthenticated) {
-    navigateTo('/login')
+    isAuthModalOpen.value = true
     return
   }
-  // TODO: добавить курс через API (пока заглушка)
-  console.log('Добавить курс:', course.value?._id)
+
+  if (!course.value) return
+
+  loading.value = true
+  try {
+    if (isCourseAdded.value) {
+      // Удаляем курс
+      await api.deleteCourse(course.value._id, userStore.token!)
+      // Обновляем данные пользователя
+      const user = await api.getMe(userStore.token!)
+      userStore.setUser(user)
+    } else {
+      // Добавляем курс
+      await api.addCourse(course.value._id, userStore.token!)
+      // Обновляем данные пользователя
+      const user = await api.getMe(userStore.token!)
+      userStore.setUser(user)
+    }
+  } catch (err: any) {
+    console.error('Ошибка:', err.message)
+  } finally {
+    loading.value = false
+  }
+}
+
+// После успешной авторизации
+const handleAuthSuccess = async () => {
+  // Если пользователь авторизовался, но курс ещё не добавлен — добавляем
+  if (course.value && !isCourseAdded.value) {
+    try {
+      await api.addCourse(course.value._id, userStore.token!)
+      const user = await api.getMe(userStore.token!)
+      userStore.setUser(user)
+    } catch (err: any) {
+      console.error('Ошибка добавления курса:', err.message)
+    }
+  }
 }
 </script>
