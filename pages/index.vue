@@ -8,7 +8,18 @@
     </div>
 
     <div class="max-w-container mx-auto px-4 py-8">
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <!-- Загрузка -->
+      <div v-if="loading" class="flex justify-center py-12">
+        <div class="text-gray-500">Загрузка курсов...</div>
+      </div>
+
+      <!-- Ошибка -->
+      <div v-else-if="error" class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl">
+        {{ error }}
+      </div>
+
+      <!-- Список курсов -->
+      <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         <NuxtLink
           v-for="course in courses"
           :key="course._id"
@@ -24,9 +35,10 @@
             </p>
             <div class="flex items-center justify-between">
               <span class="text-sm text-gray-500">
-                {{ course.durationInDays }} дней
+                {{ course.durationInDays || '—' }} дней
               </span>
               <span
+                v-if="course.difficulty"
                 class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium"
                 :class="difficultyClass(course.difficulty)"
               >
@@ -54,9 +66,12 @@
 
 <script setup lang="ts">
 import { ref, onMounted, onBeforeUnmount } from 'vue'
-import { mockCourses } from '~/utils/mockCourses'
+import type { Course } from '~/types/api'
 
-const courses = ref(mockCourses)
+const api = useApi()
+const courses = ref<Course[]>([])
+const loading = ref(true)
+const error = ref<string | null>(null)
 const showScrollButton = ref(false)
 
 const handleScroll = () => {
@@ -76,7 +91,21 @@ const difficultyClass = (difficulty: string) => {
   return map[difficulty] || 'bg-gray-100 text-gray-800'
 }
 
+const loadCourses = async () => {
+  try {
+    loading.value = true
+    error.value = null
+    const data = await api.getCourses()
+    courses.value = data
+  } catch (err: any) {
+    error.value = err.message || 'Не удалось загрузить курсы'
+  } finally {
+    loading.value = false
+  }
+}
+
 onMounted(() => {
+  loadCourses()
   window.addEventListener('scroll', handleScroll)
 })
 
