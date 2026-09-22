@@ -18,8 +18,30 @@
       <div v-else>
         <!-- Данные пользователя -->
         <div class="bg-white rounded-2xl shadow-md p-6 mb-8">
-          <h2 class="text-xl font-semibold text-gray-900 mb-4">Мои данные</h2>
-          <p class="text-gray-600"><strong>Email:</strong> {{ userStore.user?.email }}</p>
+          <div class="flex items-center gap-6">
+            <!-- Аватар-заглушка -->
+            <div class="w-24 h-24 bg-gray-200 rounded-2xl flex items-center justify-center flex-shrink-0">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+              </svg>
+            </div>
+
+            <!-- Информация -->
+            <div class="flex-1">
+              <h2 class="text-xl font-semibold text-gray-900 mb-1">
+                {{ userStore.user?.email?.split('@')[0] || 'Пользователь' }}
+              </h2>
+              <p class="text-gray-500 text-sm mb-4">
+                Логин: {{ userStore.user?.email }}
+              </p>
+              <button
+                @click="handleLogout"
+                class="px-6 py-2 rounded-full border border-gray-300 text-gray-700 hover:bg-gray-50 font-medium transition"
+              >
+                Выйти
+              </button>
+            </div>
+          </div>
         </div>
 
         <!-- Мои курсы -->
@@ -90,13 +112,23 @@
                   </div>
                 </div>
 
-                <!-- Кнопка -->
-                <button
-                  @click="openWorkoutsModal(course._id)"
-                  class="mt-auto w-full text-center px-4 py-2 rounded-full bg-primary hover:bg-primary-hover text-black font-medium transition"
-                >
-                  Начать тренировку
-                </button>
+                <!-- Кнопки -->
+                <div class="mt-auto flex flex-col gap-2">
+                  <button
+                    @click="openWorkoutsModal(course._id)"
+                    class="w-full text-center px-4 py-2 rounded-full bg-primary hover:bg-primary-hover text-black font-medium transition"
+                  >
+                    Начать тренировку
+                  </button>
+                  <button
+                    v-if="getProgressPercent(course._id) > 0"
+                    @click="handleResetProgress(course._id)"
+                    :disabled="resettingId === course._id"
+                    class="w-full text-center px-4 py-2 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium transition disabled:opacity-50"
+                  >
+                    {{ resettingId === course._id ? 'Сброс...' : 'Сбросить прогресс' }}
+                  </button>
+                </div>
               </div>
             </div>
           </div>
@@ -125,6 +157,7 @@ const allCourses = ref<Course[]>([])
 const progressMap = ref<Record<string, number>>({})
 const loading = ref(true)
 const deletingId = ref<string | null>(null)
+const resettingId = ref<string | null>(null)
 
 // Модалка
 const isWorkoutsModalOpen = ref(false)
@@ -198,6 +231,28 @@ const handleDeleteCourse = async (courseId: string) => {
   } finally {
     deletingId.value = null
   }
+}
+
+// Сброс прогресса курса
+const handleResetProgress = async (courseId: string) => {
+  if (!userStore.token) return
+
+  resettingId.value = courseId
+  try {
+    await api.resetCourseProgress(courseId, userStore.token)
+    // Обновляем прогресс
+    await loadProgress()
+  } catch (err: any) {
+    console.error('Ошибка сброса прогресса:', err.message)
+  } finally {
+    resettingId.value = null
+  }
+}
+
+// Выход из аккаунта
+const handleLogout = () => {
+  userStore.logout()
+  navigateTo('/')
 }
 
 // Открытие модалки
