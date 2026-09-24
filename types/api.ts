@@ -16,6 +16,12 @@ export interface WorkoutProgress {
   progressData: number[];
 }
 
+export interface ProgressData {
+  courseId: string;
+  courseCompleted: boolean;
+  workoutsProgress: WorkoutProgress[];
+}
+
 export interface Course {
   _id: string;
   description: string;

@@ -145,6 +145,9 @@
 </template>
 
 <script setup lang="ts">
+import type { ProgressData } from '~/types/api'
+import { getErrorMessage } from '~/utils/errors'
+
 import { ref, computed, onMounted } from 'vue'
 import type { Course } from '~/types/api'
 import { useUserStore } from '~/stores/user'
@@ -182,11 +185,11 @@ const getProgressPercent = (courseId: string): number => {
 }
 
 // Вычисление процента прогресса курса
-const calculateProgress = (progress: any): number => {
+const calculateProgress = (progress: ProgressData): number => {
   if (!progress || !progress.workoutsProgress?.length) return 0
 
   const total = progress.workoutsProgress.length
-  const completed = progress.workoutsProgress.filter((w: any) => w.workoutCompleted).length
+  const completed = progress.workoutsProgress.filter((w) => w.workoutCompleted).length
 
   return Math.round((completed / total) * 100)
 }
@@ -211,8 +214,8 @@ const loadCourses = async () => {
     const data = await api.getCourses()
     allCourses.value = data
     await loadProgress()
-  } catch (err: any) {
-    console.error('Ошибка загрузки курсов:', err.message)
+  }  catch (err: unknown) {
+  console.error('Ошибка загрузки курсов:', getErrorMessage(err))
   } finally {
     loading.value = false
   }
@@ -226,8 +229,8 @@ const handleDeleteCourse = async (courseId: string) => {
     await api.deleteCourse(courseId, userStore.token)
     const user = await api.getMe(userStore.token)
     userStore.setUser(user)
-  } catch (err: any) {
-    console.error('Ошибка удаления курса:', err.message)
+  } catch (err: unknown) {
+  console.error('Ошибка удаления курса:', getErrorMessage(err))
   } finally {
     deletingId.value = null
   }
@@ -242,8 +245,8 @@ const handleResetProgress = async (courseId: string) => {
     await api.resetCourseProgress(courseId, userStore.token)
     // Обновляем прогресс
     await loadProgress()
-  } catch (err: any) {
-    console.error('Ошибка сброса прогресса:', err.message)
+  } catch (err: unknown) {
+  console.error('Ошибка сброса прогресса:', getErrorMessage(err))
   } finally {
     resettingId.value = null
   }

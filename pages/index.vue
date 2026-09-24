@@ -67,6 +67,7 @@
 <script setup lang="ts">
 import { ref, onMounted, onBeforeUnmount } from 'vue'
 import type { Course } from '~/types/api'
+import { getErrorMessage } from '~/utils/errors'
 
 const api = useApi()
 const courses = ref<Course[]>([])
@@ -97,8 +98,8 @@ const loadCourses = async () => {
     error.value = null
     const data = await api.getCourses()
     courses.value = data
-  } catch (err: any) {
-    error.value = err.message || 'Не удалось загрузить курсы'
+  } catch (err: unknown) {
+    error.value = getErrorMessage(err, 'Не удалось загрузить курсы')
   } finally {
     loading.value = false
   }

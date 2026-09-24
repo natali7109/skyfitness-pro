@@ -97,6 +97,7 @@
 </template>
 
 <script setup lang="ts">
+import { getErrorMessage } from '~/utils/errors'
 import { ref, reactive } from 'vue'
 import { useRouter } from 'vue-router'
 import { useUserStore } from '~/stores/user'
@@ -179,8 +180,8 @@ const handleSubmit = async () => {
       password.value = ''
       confirmPassword.value = ''
     }
-  } catch (err: any) {
-    apiError.value = err.message || 'Произошла ошибка'
+  } catch (err: unknown) {
+  apiError.value = getErrorMessage(err, 'Произошла ошибка')
   } finally {
     loading.value = false
   }
