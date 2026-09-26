@@ -2,7 +2,10 @@
   <div class="min-h-screen bg-gray-50">
     <div class="max-w-container mx-auto px-4 py-8">
       <div class="mb-6">
-        <NuxtLink :to="`/courses/${courseId}`" class="text-gray-500 hover:text-black transition text-sm">
+        <NuxtLink
+          :to="`/courses/${courseId}`"
+          class="text-gray-500 hover:text-black transition text-sm"
+        >
           ← Назад к курсу
         </NuxtLink>
       </div>
@@ -13,13 +16,18 @@
       </div>
 
       <!-- Ошибка -->
-      <div v-else-if="error" class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl">
+      <div
+        v-else-if="error"
+        class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl"
+      >
         {{ error }}
       </div>
 
       <!-- Тренировка -->
       <div v-else-if="workout">
-        <h1 class="text-3xl font-bold text-gray-900 mb-6">{{ workout.name }}</h1>
+        <h1 class="text-3xl font-bold text-gray-900 mb-6">
+          {{ workout.name }}
+        </h1>
 
         <!-- Видео -->
         <div class="bg-white rounded-2xl shadow-md p-6 mb-8">
@@ -46,7 +54,11 @@
               <div class="flex items-center gap-3">
                 <span
                   class="w-6 h-6 rounded-full flex items-center justify-center text-sm font-medium"
-                  :class="isExerciseCompleted(index) ? 'bg-primary text-black' : 'bg-gray-200 text-gray-600'"
+                  :class="
+                    isExerciseCompleted(index)
+                      ? 'bg-primary text-black'
+                      : 'bg-gray-200 text-gray-600'
+                  "
                 >
                   {{ index + 1 }}
                 </span>
@@ -96,7 +108,10 @@
             />
           </div>
 
-          <div v-if="saveError" class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm">
+          <div
+            v-if="saveError"
+            class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm"
+          >
             {{ saveError }}
           </div>
 
@@ -106,7 +121,7 @@
               :disabled="saving"
               class="flex-1 py-3 rounded-full bg-primary hover:bg-primary-hover text-black font-medium transition disabled:opacity-50"
             >
-              {{ saving ? 'Сохранение...' : 'Сохранить' }}
+              {{ saving ? "Сохранение..." : "Сохранить" }}
             </button>
             <button
               type="button"
@@ -123,85 +138,93 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
-import { useRoute } from 'vue-router'
-import type { Workout } from '~/types/api'
-import { useUserStore } from '~/stores/user'
+import { getErrorMessage } from "~/utils/errors";
+import { ref, computed, onMounted } from "vue";
+import { useRoute } from "vue-router";
+import type { Workout } from "~/types/api";
+import { useUserStore } from "~/stores/user";
 
-const route = useRoute()
-const userStore = useUserStore()
-const api = useApi()
+const route = useRoute();
+const userStore = useUserStore();
+const api = useApi();
 
-const workout = ref<Workout | null>(null)
-const progressData = ref<number[]>([])
-const loading = ref(true)
-const error = ref<string | null>(null)
+const workout = ref<Workout | null>(null);
+const progressData = ref<number[]>([]);
+const loading = ref(true);
+const error = ref<string | null>(null);
 
-const isProgressModalOpen = ref(false)
-const progressForm = ref<number[]>([])
-const saving = ref(false)
-const saveError = ref<string | null>(null)
+const isProgressModalOpen = ref(false);
+const progressForm = ref<number[]>([]);
+const saving = ref(false);
+const saveError = ref<string | null>(null);
 
-const courseId = computed(() => route.query.courseId as string || '')
-const workoutId = computed(() => route.params.id as string)
+const courseId = computed(() => (route.query.courseId as string) || "");
+const workoutId = computed(() => route.params.id as string);
 
 const isExerciseCompleted = (index: number) => {
-  if (!workout.value) return false
-  const exercise = workout.value.exercises[index]
-  const done = progressData.value[index] || 0
-  return done >= (exercise?.quantity || 0)
-}
+  if (!workout.value) return false;
+  const exercise = workout.value.exercises[index];
+  const done = progressData.value[index] || 0;
+  return done >= (exercise?.quantity || 0);
+};
 
 const getProgressValue = (index: number) => {
-  return progressData.value[index] || 0
-}
+  return progressData.value[index] || 0;
+};
 
 const loadWorkout = async () => {
   try {
-    loading.value = true
-    error.value = null
+    loading.value = true;
+    error.value = null;
 
     if (!courseId.value) {
-      error.value = 'Не указан ID курса'
-      return
+      error.value = "Не указан ID курса";
+      return;
     }
 
     // Загружаем данные тренировки
-    const workoutResponse = await api.getCourseWorkouts(courseId.value, userStore.token!)
-    const found = workoutResponse.find((w) => w._id === workoutId.value)
+    const workoutResponse = await api.getCourseWorkouts(
+      courseId.value,
+      userStore.token!
+    );
+    const found = workoutResponse.find((w) => w._id === workoutId.value);
     if (!found) {
-      error.value = 'Тренировка не найдена'
-      return
+      error.value = "Тренировка не найдена";
+      return;
     }
-    workout.value = found
+    workout.value = found;
 
     // Загружаем прогресс (если авторизован)
     if (userStore.isAuthenticated && userStore.token) {
       try {
-        const progress = await api.getWorkoutProgress(courseId.value, workoutId.value, userStore.token)
-        progressData.value = progress.progressData || []
-      } catch (err) {
+        const progress = await api.getWorkoutProgress(
+          courseId.value,
+          workoutId.value,
+          userStore.token
+        );
+        progressData.value = progress.progressData || [];
+      } catch {
         // Прогресса может не быть — это нормально
-        progressData.value = []
+        progressData.value = [];
       }
     }
 
     // Инициализируем форму
     progressForm.value = workout.value.exercises.map(
       (_, index) => progressData.value[index] || 0
-    )
-  } catch (err: any) {
-    error.value = err.message || 'Не удалось загрузить тренировку'
+    );
+  } catch (err: unknown) {
+    error.value = getErrorMessage(err, "Не удалось загрузить тренировку");
   } finally {
-    loading.value = false
+    loading.value = false;
   }
-}
+};
 
 const handleSaveProgress = async () => {
-  if (!userStore.token || !workout.value) return
+  if (!userStore.token || !workout.value) return;
 
-  saving.value = true
-  saveError.value = null
+  saving.value = true;
+  saveError.value = null;
 
   try {
     await api.updateProgress(
@@ -209,17 +232,17 @@ const handleSaveProgress = async () => {
       workoutId.value,
       progressForm.value,
       userStore.token
-    )
-    progressData.value = [...progressForm.value]
-    isProgressModalOpen.value = false
-  } catch (err: any) {
-    saveError.value = err.message || 'Ошибка сохранения'
+    );
+    progressData.value = [...progressForm.value];
+    isProgressModalOpen.value = false;
+  } catch (err: unknown) {
+    saveError.value = getErrorMessage(err, "Ошибка сохранения");
   } finally {
-    saving.value = false
+    saving.value = false;
   }
-}
+};
 
 onMounted(() => {
-  loadWorkout()
-})
+  loadWorkout();
+});
 </script>

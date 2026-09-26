@@ -116,6 +116,7 @@
 </template>
 
 <script setup lang="ts">
+import { getErrorMessage } from '~/utils/errors'
 import { computed, ref, onMounted, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import type { Course, Workout } from '~/types/api'
@@ -161,8 +162,8 @@ const loadCourse = async () => {
     const data = await api.getCourseById(id)
     course.value = data
     await loadWorkouts()
-  } catch (err: any) {
-    error.value = err.message || 'Не удалось загрузить курс'
+  } catch (err: unknown) {
+    error.value = getErrorMessage(err, 'Не удалось загрузить курс')
   } finally {
     loading.value = false
   }
@@ -174,8 +175,8 @@ const loadWorkouts = async () => {
     workoutsLoading.value = true
     const data = await api.getCourseWorkouts(course.value._id, userStore.token)
     workouts.value = data
-  } catch (err: any) {
-    console.error('Ошибка загрузки тренировок:', err.message)
+  } catch (err: unknown) {
+    console.error('Ошибка загрузки тренировок:', getErrorMessage(err))
   } finally {
     workoutsLoading.value = false
   }
@@ -200,8 +201,8 @@ const handleCourseAction = async () => {
     const user = await api.getMe(userStore.token)
     userStore.setUser(user)
     await loadWorkouts()
-  } catch (err: any) {
-    console.error('Ошибка:', err.message)
+  } catch (err: unknown) {
+    console.error('Ошибка:', getErrorMessage(err))
   } finally {
     actionLoading.value = false
   }
@@ -214,8 +215,8 @@ const handleAuthSuccess = async () => {
       const user = await api.getMe(userStore.token)
       userStore.setUser(user)
       await loadWorkouts()
-    } catch (err: any) {
-      console.error('Ошибка добавления курса:', err.message)
+    } catch (err: unknown) {
+      console.error('Ошибка добавления курса:', getErrorMessage(err))
     }
   }
 }
