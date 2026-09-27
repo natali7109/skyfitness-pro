@@ -4,8 +4,8 @@
    <section class="max-w-[1440px] mx-auto px-4 lg:px-[140px] pt-4 lg:pt-[20px] pb-10 lg:pb-[60px]">
       <div class="relative flex flex-col lg:flex-row lg:items-start lg:justify-between gap-6">
         <!-- Заголовок -->
-        <h1 class="text-[32px] lg:text-[60px] font-medium leading-[1.1] lg:leading-[1] text-black max-w-[947px]">
-          Начните заниматься спортом и&nbsp;улучшите качество жизни
+        <h1 class="text-[28px] md:text-[36px] lg:text-[40px] xl:text-[60px] font-medium leading-[1.1] lg:leading-[1.1] text-black max-w-[947px]">
+          Начните заниматься спортом и улучшите качество жизни
         </h1>
 
         <!-- Зелёный блок -->

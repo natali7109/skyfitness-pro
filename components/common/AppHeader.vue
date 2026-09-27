@@ -16,13 +16,13 @@
 
       <!-- Кнопка «Войти» / Профиль -->
       <div class="relative">
-       <NuxtLink
+       <button
   v-if="!userStore.isAuthenticated"
-  to="/login"
+  @click="uiStore.openAuthModal()"
   class="inline-flex items-center justify-center w-[83px] h-9 lg:w-[103px] lg:h-[52px] rounded-[46px] bg-primary hover:bg-primary-hover text-black text-sm lg:text-base font-normal transition"
 >
   Войти
-</NuxtLink>
+</button>
 
         <div v-else class="relative">
           <button
@@ -60,10 +60,12 @@
 </template>
 
 <script setup lang="ts">
+import { useUiStore } from '~/stores/ui'
 import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useUserStore } from '~/stores/user'
 
+const uiStore = useUiStore()
 const router = useRouter()
 const userStore = useUserStore()
 const isMenuOpen = ref(false)

@@ -1,5 +1,5 @@
 <template>
-  <div class="w-full max-w-[343px] lg:max-w-[360px] h-[492px] lg:h-[501px] bg-white rounded-[30px] overflow-hidden shadow-md hover:shadow-lg transition-shadow duration-200 flex flex-col">
+ <div class="w-full bg-white rounded-[30px] overflow-hidden shadow-md hover:shadow-lg transition-shadow duration-200 flex flex-col">
     <!-- Картинка + иконка -->
     <div class="relative w-full h-[275px] lg:h-[325px] flex-shrink-0">
       <img
