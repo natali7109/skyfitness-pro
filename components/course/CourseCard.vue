@@ -1,5 +1,5 @@
 <template>
- <div class="w-full bg-white rounded-[30px] overflow-hidden shadow-md hover:shadow-lg transition-shadow duration-200 flex flex-col">
+  <div class="w-full bg-white rounded-[30px] overflow-hidden shadow-md hover:shadow-lg transition-shadow duration-200 flex flex-col">
     <!-- Картинка + иконка -->
     <div class="relative w-full h-[275px] lg:h-[325px] flex-shrink-0">
       <img
@@ -62,6 +62,29 @@
         <span>Сложность:</span>
         <span class="text-gray-700">{{ course.difficulty }}</span>
       </div>
+
+      <!-- Прогресс (только для профиля) -->
+      <div v-if="variant === 'profile'" class="mt-2">
+        <div class="text-sm text-gray-700 mb-2">
+          Прогресс {{ progress }}%
+        </div>
+        <div class="w-full h-1 bg-gray-200 rounded-full overflow-hidden">
+          <div
+            class="h-full bg-blue-500 transition-all duration-300"
+            :style="{ width: `${progress}%` }"
+          ></div>
+        </div>
+      </div>
+
+      <!-- Кнопка (только для профиля) -->
+      <button
+        v-if="variant === 'profile'"
+        @click="$emit('start', course._id)"
+        class="mt-auto w-full text-center bg-primary hover:bg-primary-hover text-black font-medium transition"
+        style="height: 52px; border-radius: 46px; font-size: 18px;"
+      >
+        {{ buttonText }}
+      </button>
     </div>
   </div>
 </template>
@@ -73,14 +96,15 @@ import type { Course } from '~/types/api'
 const props = defineProps<{
   course: Course
   variant?: 'home' | 'profile'
+  progress?: number
 }>()
 
 defineEmits<{
   (e: 'add', courseId: string): void
   (e: 'delete', courseId: string): void
+  (e: 'start', courseId: string): void
 }>()
 
-// Картинка курса по ID
 const courseImage = computed(() => {
   const map: Record<string, string> = {
     'ab1c3f': '/images/yoga.png',
@@ -90,5 +114,12 @@ const courseImage = computed(() => {
     'q02a6i': '/images/bodyflex.png',
   }
   return map[props.course._id] || '/images/yoga.png'
+})
+
+const buttonText = computed(() => {
+  const p = props.progress || 0
+  if (p === 0) return 'Начать тренировку'
+  if (p === 100) return 'Начать заново'
+  return 'Продолжить'
 })
 </script>
