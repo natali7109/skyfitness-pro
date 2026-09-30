@@ -21,27 +21,27 @@
       <!-- Тренировка -->
       <div v-else-if="workout">
         <!-- Название -->
-        <h1 class="font-bold text-black mb-8" style="font-size: 56px; line-height: 60px;">
+        <h1 class="font-bold text-black mb-4 lg:mb-8 text-[24px] lg:text-[56px]" style="line-height: 1.1;">
           {{ getWorkoutTitle(workout.name) }}
         </h1>
 
         <!-- Видео -->
-        <div class="bg-white rounded-[30px] shadow-md mb-8" style="padding: 40px;">
-          <div class="aspect-video relative rounded-[30px] overflow-hidden bg-gray-100 flex items-center justify-center">
+        <div class="bg-white rounded-[30px] shadow-md mb-4 lg:mb-8" style="padding: 20px;">
+          <div class="aspect-video relative rounded-[20px] lg:rounded-[30px] overflow-hidden bg-gray-100 flex items-center justify-center">
             <!-- Заглушка с кнопкой -->
             <div class="text-center px-4">
-              <div class="w-20 h-20 bg-red-600 rounded-full flex items-center justify-center mx-auto mb-4">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-white" fill="currentColor" viewBox="0 0 24 24">
+              <div class="w-12 h-12 lg:w-20 lg:h-20 bg-red-600 rounded-full flex items-center justify-center mx-auto mb-2 lg:mb-4">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 lg:h-10 lg:w-10 text-white" fill="currentColor" viewBox="0 0 24 24">
                   <path d="M8 5v14l11-7z"/>
                 </svg>
               </div>
-              <p class="text-gray-700 text-lg mb-4">Видео доступно на YouTube</p>
+              <p class="text-gray-700 text-sm lg:text-lg mb-2 lg:mb-4">Видео доступно на YouTube</p>
               <a
                 :href="workout.video.replace('/embed/', '/watch?v=')"
                 target="_blank"
                 rel="noopener noreferrer"
-                class="inline-block bg-red-600 hover:bg-red-700 text-white font-medium transition"
-                style="padding: 12px 32px; border-radius: 46px; font-size: 18px;"
+                class="inline-block bg-red-600 hover:bg-red-700 text-white font-medium transition text-sm lg:text-base"
+                style="padding: 8px 20px; lg:padding: 12px 32px; border-radius: 46px;"
               >
                 Смотреть на YouTube
               </a>
@@ -50,46 +50,46 @@
         </div>
 
         <!-- Упражнения -->
-<div class="bg-white rounded-[30px] shadow-md mb-8" style="padding: 40px;">
-  <h2 class="font-semibold text-black mb-6" style="font-size: 32px; line-height: 35px;">
-    Упражнения тренировки
-  </h2>
+        <div class="bg-white rounded-[30px] shadow-md mb-4 lg:mb-8" style="padding: 20px;">
+          <h2 class="font-semibold text-black mb-4 lg:mb-6 text-[20px] lg:text-[32px]" style="line-height: 1.1;">
+            Упражнения тренировки
+          </h2>
 
-  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3" style="gap: 40px;">
-    <div
-      v-for="(exercise, index) in workout.exercises"
-      :key="index"
-      class="flex flex-col"
-      style="gap: 10px;"
-    >
-      <p class="text-black" style="font-size: 18px; line-height: 20px;">
-        {{ exercise.name }}
-      </p>
-      <p class="text-gray-500" style="font-size: 18px; line-height: 20px;">
-        {{ getProgressValue(index) }}%
-      </p>
-      <!-- Голубая полоса прогресса -->
-      <div class="w-full" style="height: 4px; background-color: #E5E7EB; border-radius: 2px;">
-        <div
-          class="h-full transition-all duration-300"
-          style="background-color: #3B82F6;"
-          :style="{ width: `${getProgressValue(index)}%` }"
-        ></div>
-      </div>
-    </div>
-  </div>
-</div>
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-10">
+            <div
+              v-for="(exercise, index) in workout.exercises"
+              :key="index"
+              class="flex flex-col"
+              style="gap: 8px;"
+            >
+              <p class="text-black text-[16px] lg:text-[18px]" style="line-height: 1.2;">
+                {{ exercise.name }}
+              </p>
+              <p class="text-gray-500 text-[16px] lg:text-[18px]" style="line-height: 1.2;">
+                {{ getProgressValue(index) }}%
+              </p>
+              <!-- Голубая полоса прогресса -->
+              <div class="w-full" style="height: 4px; background-color: #E5E7EB; border-radius: 2px;">
+                <div
+                  class="h-full transition-all duration-300"
+                  style="background-color: #3B82F6;"
+                  :style="{ width: `${getProgressValue(index)}%` }"
+                ></div>
+              </div>
+            </div>
+          </div>
+        </div>
 
         <!-- Кнопка заполнения прогресса -->
-<div class="bg-white rounded-[30px] shadow-md" style="padding: 40px;">
-  <button
-    @click="isProgressModalOpen = true"
-    class="bg-primary hover:bg-primary-hover text-black font-medium transition"
-    style="width: 320px; height: 52px; border-radius: 46px; font-size: 18px;"
-  >
-    {{ isAnyProgress ? 'Обновить свой прогресс' : 'Заполнить свой прогресс' }}
-  </button>
-</div>
+        <div class="bg-white rounded-[30px] shadow-md" style="padding: 20px;">
+          <button
+            @click="isProgressModalOpen = true"
+            class="bg-primary hover:bg-primary-hover text-black font-medium transition w-full lg:w-[320px] text-[16px] lg:text-[18px]"
+            style="height: 50px; lg:height: 52px; border-radius: 46px;"
+          >
+            {{ isAnyProgress ? 'Обновить свой прогресс' : 'Заполнить свой прогресс' }}
+          </button>
+        </div>
       </div>
     </div>
 
@@ -99,19 +99,19 @@
       class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4"
       @click.self="isProgressModalOpen = false"
     >
-      <div class="bg-white shadow-xl" style="width: 426px; border-radius: 30px; padding: 30px;">
-        <h2 class="font-bold text-black mb-6" style="font-size: 32px; line-height: 35px;">
+      <div class="bg-white shadow-xl w-full max-w-[426px]" style="border-radius: 30px; padding: 30px;">
+        <h2 class="font-bold text-black mb-6 text-[24px] lg:text-[32px]" style="line-height: 1.1;">
           Мой прогресс
         </h2>
 
-        <form @submit.prevent="handleSaveProgress" class="flex flex-col" style="gap: 40px;">
+        <form @submit.prevent="handleSaveProgress" class="flex flex-col" style="gap: 20px; lg:gap: 40px;">
           <div
             v-for="(exercise, index) in workout?.exercises || []"
             :key="index"
             class="flex flex-col"
             style="gap: 10px;"
           >
-            <label class="text-black" style="font-size: 18px; line-height: 20px;">
+            <label class="text-black text-[16px] lg:text-[18px]" style="line-height: 1.2;">
               Сколько раз вы сделали {{ exercise.name.toLowerCase() }}?
             </label>
             <input
@@ -120,7 +120,7 @@
               min="0"
               :max="exercise.quantity"
               class="border border-gray-300 focus:outline-none focus:border-black"
-              style="height: 52px; border-radius: 30px; padding: 0 20px; font-size: 18px;"
+              style="height: 50px; lg:height: 52px; border-radius: 30px; padding: 0 20px; font-size: 16px; lg:font-size: 18px;"
             />
           </div>
 
@@ -131,8 +131,8 @@
           <button
             type="submit"
             :disabled="saving"
-            class="bg-primary hover:bg-primary-hover text-black font-medium transition disabled:opacity-50"
-            style="width: 100%; height: 52px; border-radius: 46px; font-size: 18px;"
+            class="bg-primary hover:bg-primary-hover text-black font-medium transition disabled:opacity-50 w-full text-[16px] lg:text-[18px]"
+            style="height: 50px; lg:height: 52px; border-radius: 46px;"
           >
             {{ saving ? 'Сохранение...' : 'Сохранить' }}
           </button>
@@ -141,28 +141,28 @@
     </div>
 
     <!-- Модалка "Ваш прогресс засчитан!" -->
-<div
-  v-if="isSuccessModalOpen"
-  class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4"
-  @click.self="isSuccessModalOpen = false"
->
-  <div class="bg-white shadow-xl text-center" style="width: 426px; border-radius: 30px; padding: 30px;">
-    <p class="font-bold text-black" style="font-size: 40px; line-height: 44px; margin-bottom: 34px;">
-      Ваш прогресс засчитан!
-    </p>
-    <div class="w-16 h-16 bg-primary rounded-full flex items-center justify-center mx-auto">
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-black" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" />
-      </svg>
-    </div>
-    <button
-      @click="isSuccessModalOpen = false"
-      class="mt-6 text-gray-500 hover:text-black transition text-sm"
+    <div
+      v-if="isSuccessModalOpen"
+      class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4"
+      @click.self="isSuccessModalOpen = false"
     >
-      Закрыть
-    </button>
-  </div>
-</div>
+      <div class="bg-white shadow-xl text-center w-full max-w-[426px]" style="border-radius: 30px; padding: 30px;">
+        <p class="font-bold text-black text-[24px] lg:text-[40px]" style="line-height: 1.1; margin-bottom: 20px; lg:margin-bottom: 34px;">
+          Ваш прогресс засчитан!
+        </p>
+        <div class="w-12 h-12 lg:w-16 lg:h-16 bg-primary rounded-full flex items-center justify-center mx-auto">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 lg:h-8 lg:w-8 text-black" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" />
+          </svg>
+        </div>
+        <button
+          @click="isSuccessModalOpen = false"
+          class="mt-4 lg:mt-6 text-gray-500 hover:text-black transition text-sm"
+        >
+          Закрыть
+        </button>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -172,7 +172,6 @@ import { ref, computed, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import type { Workout } from '~/types/api'
 import { useUserStore } from '~/stores/user'
-
 
 const route = useRoute()
 const userStore = useUserStore()
@@ -196,7 +195,6 @@ const isAnyProgress = computed(() => {
   return progressData.value.some((value) => value > 0)
 })
 
-// Разбивка длинного названия
 const getWorkoutTitle = (name: string): string => {
   return name.split(' / ')[0] || name
 }
