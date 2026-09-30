@@ -1,5 +1,9 @@
 <template>
-  <div class="w-full bg-white rounded-[30px] overflow-hidden shadow-md hover:shadow-lg transition-shadow duration-200 flex flex-col">
+  <component
+    :is="variant === 'home' ? NuxtLink : 'div'"
+    :to="variant === 'home' ? `/courses/${course._id}` : undefined"
+    class="w-full bg-white rounded-[30px] overflow-hidden shadow-md hover:shadow-lg transition-shadow duration-200 flex flex-col"
+  >
     <!-- Картинка + иконка -->
     <div class="relative w-full h-[275px] lg:h-[325px] flex-shrink-0">
       <img
@@ -7,10 +11,9 @@
         :alt="course.nameRU"
         class="w-full h-full object-cover"
       />
-      <!-- Иконка «+» (для главной) -->
       <button
         v-if="variant === 'home'"
-        @click="$emit('add', course._id)"
+        @click.stop.prevent="$emit('add', course._id)"
         class="absolute top-5 right-5 w-8 h-8 bg-white rounded-full flex items-center justify-center shadow hover:bg-gray-100 transition"
         aria-label="Добавить курс"
       >
@@ -18,10 +21,9 @@
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
         </svg>
       </button>
-      <!-- Иконка удаления (для профиля) -->
       <button
         v-else
-        @click="$emit('delete', course._id)"
+        @click.stop.prevent="$emit('delete', course._id)"
         class="absolute top-5 right-5 w-8 h-8 bg-white rounded-full flex items-center justify-center shadow hover:bg-gray-100 transition"
         aria-label="Удалить курс"
       >
@@ -33,30 +35,21 @@
 
     <!-- Контент -->
     <div class="p-5 flex flex-col flex-1 gap-4">
-      <!-- Название -->
       <h3 class="text-[28px] font-semibold text-black leading-tight">
         {{ course.nameRU }}
       </h3>
 
-      <!-- Метаданные (пилюли) -->
       <div class="flex flex-wrap items-center gap-2">
-        <span
-          v-if="course.durationInDays"
-          class="inline-flex items-center gap-2 bg-gray-100 rounded-[46px] px-3 py-2 text-sm text-black"
-        >
+        <span v-if="course.durationInDays" class="inline-flex items-center gap-2 bg-gray-100 rounded-[46px] px-3 py-2 text-sm text-black">
           <img src="/images/calendar.png" alt="" class="w-[18px] h-[18px]" />
           {{ course.durationInDays }} дней
         </span>
-        <span
-          v-if="course.dailyDurationInMinutes"
-          class="inline-flex items-center gap-2 bg-gray-100 rounded-[46px] px-3 py-2 text-sm text-black"
-        >
+        <span v-if="course.dailyDurationInMinutes" class="inline-flex items-center gap-2 bg-gray-100 rounded-[46px] px-3 py-2 text-sm text-black">
           <img src="/images/clock.png" alt="" class="w-[15px] h-[15px]" />
           {{ course.dailyDurationInMinutes.from }}-{{ course.dailyDurationInMinutes.to }} мин/день
         </span>
       </div>
 
-      <!-- Сложность -->
       <div v-if="course.difficulty" class="flex items-center gap-2 text-sm text-gray-500">
         <img src="/images/difficulty.png" alt="" class="w-[18px] h-[18px]" />
         <span>Сложность:</span>
@@ -79,18 +72,19 @@
       <!-- Кнопка (только для профиля) -->
       <button
         v-if="variant === 'profile'"
-        @click="$emit('start', course._id)"
+        @click.stop.prevent="$emit('start', course._id)"
         class="mt-auto w-full text-center bg-primary hover:bg-primary-hover text-black font-medium transition"
         style="height: 52px; border-radius: 46px; font-size: 18px;"
       >
         {{ buttonText }}
       </button>
     </div>
-  </div>
+  </component>
 </template>
 
 <script setup lang="ts">
 import { computed } from 'vue'
+import { NuxtLink } from '#components'
 import type { Course } from '~/types/api'
 
 const props = defineProps<{
