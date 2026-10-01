@@ -1,10 +1,19 @@
 <template>
   <div class="min-h-screen bg-gray-50">
     <div class="max-w-container mx-auto px-4 py-8">
-      <h1 class="text-3xl font-bold text-gray-900 mb-6">Мой профиль</h1>
+      <!-- Заголовок -->
+      <h1
+        class="font-bold text-gray-900 mb-6 text-[24px] lg:text-[40px]"
+        style="line-height: 1.1"
+      >
+        Профиль
+      </h1>
 
       <!-- Если не авторизован -->
-      <div v-if="!userStore.isAuthenticated" class="bg-white rounded-2xl shadow-md p-6 text-center">
+      <div
+        v-if="!userStore.isAuthenticated"
+        class="bg-white rounded-2xl shadow-md p-6 text-center"
+      >
         <p class="text-gray-600 mb-4">Вы не авторизованы</p>
         <NuxtLink
           to="/login"
@@ -17,26 +26,52 @@
       <!-- Если авторизован -->
       <div v-else>
         <!-- Данные пользователя -->
-        <div class="bg-white rounded-2xl shadow-md p-6 mb-8">
-          <div class="flex items-center gap-6">
+        <div
+          class="bg-white rounded-[30px] shadow-md mb-8 w-full max-w-[1160px] mx-auto lg:mx-0"
+          style="padding: 30px"
+        >
+          <div
+            class="flex flex-col items-center lg:flex-row lg:items-center"
+            style="gap: 30px"
+          >
             <!-- Аватар-заглушка -->
-            <div class="w-24 h-24 bg-gray-200 rounded-2xl flex items-center justify-center flex-shrink-0">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+            <div
+              class="bg-gray-200 rounded-[20px] flex items-center justify-center flex-shrink-0 overflow-hidden w-[141px] h-[141px] lg:w-[197px] lg:h-[197px]"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="text-gray-400 w-[100px] h-[100px] lg:w-[140px] lg:h-[140px]"
+                style="margin-top: 30px"
+                fill="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"
+                />
               </svg>
             </div>
 
             <!-- Информация -->
-            <div class="flex-1">
-              <h2 class="text-xl font-semibold text-gray-900 mb-1">
-                {{ userStore.user?.email?.split('@')[0] || 'Пользователь' }}
-              </h2>
-              <p class="text-gray-500 text-sm mb-4">
-                Логин: {{ userStore.user?.email }}
+            <div
+              class="flex flex-col items-center lg:items-start w-full lg:w-[300px]"
+            >
+              <p
+                class="text-black font-semibold text-[24px] lg:text-[32px]"
+                style="line-height: 1.1"
+              >
+                {{ userStore.user?.email?.split("@")[0] || "Пользователь" }}
+              </p>
+              <p
+                class="text-gray-500 text-[16px] lg:text-[18px]"
+                style="margin-top: 20px"
+              >
+                Логин:
+                {{ userStore.user?.email?.split("@")[0] || "sergey.petrov96" }}
               </p>
               <button
                 @click="handleLogout"
-                class="px-6 py-2 rounded-full border border-gray-300 text-gray-700 hover:bg-gray-50 font-medium transition"
+                class="bg-transparent border border-black text-black hover:bg-gray-50 transition w-[283px] lg:w-[192px]"
+                style="height: 50px; lg:height: 52px; border-radius: 46px; font-size: 16px; margin-top: 20px;"
               >
                 Выйти
               </button>
@@ -45,8 +80,16 @@
         </div>
 
         <!-- Мои курсы -->
-        <div class="bg-white rounded-2xl shadow-md p-6">
-          <h2 class="text-xl font-semibold text-gray-900 mb-4">Мои курсы</h2>
+        <div
+          class="bg-white rounded-[30px] shadow-md w-full max-w-[1160px] mx-auto lg:mx-0"
+          style="padding: 30px"
+        >
+          <h2
+            class="font-bold text-gray-900 mb-6 text-[24px] lg:text-[40px]"
+            style="line-height: 1.1"
+          >
+            Мои курсы
+          </h2>
 
           <div v-if="loading" class="text-gray-500">Загрузка курсов...</div>
 
@@ -54,83 +97,19 @@
             У вас пока нет добавленных курсов
           </div>
 
-          <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <div
+          <div
+            v-else
+            class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 justify-items-center"
+          >
+            <CourseCard
               v-for="course in myCourses"
               :key="course._id"
-              class="border border-gray-200 rounded-2xl overflow-hidden hover:shadow-lg transition-shadow duration-200 flex flex-col"
-            >
-              <!-- Картинка-заглушка -->
-              <div class="h-40 bg-gradient-to-br from-yellow-300 to-orange-400 relative">
-                <button
-                  @click="handleDeleteCourse(course._id)"
-                  :disabled="deletingId === course._id"
-                  class="absolute top-3 right-3 w-8 h-8 bg-white rounded-full flex items-center justify-center shadow hover:bg-gray-100 transition disabled:opacity-50"
-                  aria-label="Удалить курс"
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                  </svg>
-                </button>
-              </div>
-
-              <div class="p-5 flex flex-col flex-1">
-                <h3 class="text-lg font-semibold text-gray-900 mb-3">
-                  {{ course.nameRU }}
-                </h3>
-
-                <!-- Метаданные -->
-                <div class="flex flex-wrap items-center gap-3 text-xs text-gray-500 mb-3">
-                  <span v-if="course.durationInDays">📅 {{ course.durationInDays }} дней</span>
-                  <span v-if="course.dailyDurationInMinutes">
-                    ⏱️ {{ course.dailyDurationInMinutes.from }}-{{ course.dailyDurationInMinutes.to }} мин/день
-                  </span>
-                </div>
-
-                <!-- Сложность -->
-                <div v-if="course.difficulty" class="flex items-center gap-2 text-xs mb-4">
-                  <span class="text-gray-500">Сложность:</span>
-                  <span
-                    class="inline-flex items-center px-2 py-1 rounded-full font-medium"
-                    :class="difficultyClass(course.difficulty)"
-                  >
-                    {{ course.difficulty }}
-                  </span>
-                </div>
-
-                <!-- Прогресс -->
-                <div class="mb-4">
-                  <div class="flex items-center justify-between text-xs text-gray-600 mb-1">
-                    <span>Прогресс:</span>
-                    <span>{{ getProgressPercent(course._id) }}%</span>
-                  </div>
-                  <div class="w-full h-1.5 bg-gray-200 rounded-full overflow-hidden">
-                    <div
-                      class="h-full bg-blue-500 transition-all duration-300"
-                      :style="{ width: `${getProgressPercent(course._id)}%` }"
-                    ></div>
-                  </div>
-                </div>
-
-                <!-- Кнопки -->
-                <div class="mt-auto flex flex-col gap-2">
-                  <button
-                    @click="openWorkoutsModal(course._id)"
-                    class="w-full text-center px-4 py-2 rounded-full bg-primary hover:bg-primary-hover text-black font-medium transition"
-                  >
-                    Начать тренировку
-                  </button>
-                  <button
-                    v-if="getProgressPercent(course._id) > 0"
-                    @click="handleResetProgress(course._id)"
-                    :disabled="resettingId === course._id"
-                    class="w-full text-center px-4 py-2 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium transition disabled:opacity-50"
-                  >
-                    {{ resettingId === course._id ? 'Сброс...' : 'Сбросить прогресс' }}
-                  </button>
-                </div>
-              </div>
-            </div>
+              :course="course"
+              variant="profile"
+              :progress="getProgressPercent(course._id)"
+              @delete="handleDeleteCourse"
+              @start="openWorkoutsModal"
+            />
           </div>
         </div>
       </div>
@@ -145,126 +124,107 @@
 </template>
 
 <script setup lang="ts">
-import type { ProgressData } from '~/types/api'
-import { getErrorMessage } from '~/utils/errors'
+import type { ProgressData } from "~/types/api";
+import { getErrorMessage } from "~/utils/errors";
+import { ref, computed, onMounted } from "vue";
+import type { Course } from "~/types/api";
+import { useUserStore } from "~/stores/user";
+import WorkoutsModal from "~/components/course/WorkoutsModal.vue";
+import CourseCard from "~/components/course/CourseCard.vue";
 
-import { ref, computed, onMounted } from 'vue'
-import type { Course } from '~/types/api'
-import { useUserStore } from '~/stores/user'
-import WorkoutsModal from '~/components/course/WorkoutsModal.vue'
+const userStore = useUserStore();
+const api = useApi();
 
-const userStore = useUserStore()
-const api = useApi()
+const allCourses = ref<Course[]>([]);
+const progressMap = ref<Record<string, number>>({});
+const loading = ref(true);
+const deletingId = ref<string | null>(null);
+const resettingId = ref<string | null>(null);
 
-const allCourses = ref<Course[]>([])
-const progressMap = ref<Record<string, number>>({})
-const loading = ref(true)
-const deletingId = ref<string | null>(null)
-const resettingId = ref<string | null>(null)
-
-// Модалка
-const isWorkoutsModalOpen = ref(false)
-const selectedCourseId = ref('')
+const isWorkoutsModalOpen = ref(false);
+const selectedCourseId = ref("");
 
 const myCourses = computed(() => {
-  const selected = userStore.user?.selectedCourses || []
-  return allCourses.value.filter((course) => selected.includes(course._id))
-})
-
-const difficultyClass = (difficulty: string) => {
-  const map: Record<string, string> = {
-    'начальный': 'bg-green-100 text-green-800',
-    'средний': 'bg-yellow-100 text-yellow-800',
-    'сложный': 'bg-red-100 text-red-800',
-  }
-  return map[difficulty] || 'bg-gray-100 text-gray-800'
-}
+  const selected = userStore.user?.selectedCourses || [];
+  return allCourses.value.filter((course) => selected.includes(course._id));
+});
 
 const getProgressPercent = (courseId: string): number => {
-  return progressMap.value[courseId] || 0
-}
+  return progressMap.value[courseId] || 0;
+};
 
-// Вычисление процента прогресса курса
 const calculateProgress = (progress: ProgressData): number => {
-  if (!progress || !progress.workoutsProgress?.length) return 0
+  if (!progress || !progress.workoutsProgress?.length) return 0;
+  const total = progress.workoutsProgress.length;
+  const completed = progress.workoutsProgress.filter(
+    (w) => w.workoutCompleted
+  ).length;
+  return Math.round((completed / total) * 100);
+};
 
-  const total = progress.workoutsProgress.length
-  const completed = progress.workoutsProgress.filter((w) => w.workoutCompleted).length
-
-  return Math.round((completed / total) * 100)
-}
-
-// Загрузка прогресса для каждого курса
 const loadProgress = async () => {
-  if (!userStore.token) return
-
+  if (!userStore.token) return;
   for (const course of myCourses.value) {
     try {
-      const progress = await api.getProgress(course._id, userStore.token)
-      progressMap.value[course._id] = calculateProgress(progress)
-    } catch (err) {
-      progressMap.value[course._id] = 0
+      const progress = await api.getProgress(course._id, userStore.token);
+      progressMap.value[course._id] = calculateProgress(progress);
+    } catch {
+      progressMap.value[course._id] = 0;
     }
   }
-}
+};
 
 const loadCourses = async () => {
   try {
-    loading.value = true
-    const data = await api.getCourses()
-    allCourses.value = data
-    await loadProgress()
-  }  catch (err: unknown) {
-  console.error('Ошибка загрузки курсов:', getErrorMessage(err))
+    loading.value = true;
+    const data = await api.getCourses();
+    allCourses.value = data;
+    await loadProgress();
+  } catch (err: unknown) {
+    console.error("Ошибка загрузки курсов:", getErrorMessage(err));
   } finally {
-    loading.value = false
+    loading.value = false;
   }
-}
+};
 
 const handleDeleteCourse = async (courseId: string) => {
-  if (!userStore.token) return
-
-  deletingId.value = courseId
+  if (!userStore.token) return;
+  deletingId.value = courseId;
   try {
-    await api.deleteCourse(courseId, userStore.token)
-    const user = await api.getMe(userStore.token)
-    userStore.setUser(user)
+    await api.deleteCourse(courseId, userStore.token);
+    const user = await api.getMe(userStore.token);
+    userStore.setUser(user);
   } catch (err: unknown) {
-  console.error('Ошибка удаления курса:', getErrorMessage(err))
+    console.error("Ошибка удаления курса:", getErrorMessage(err));
   } finally {
-    deletingId.value = null
+    deletingId.value = null;
   }
-}
+};
 
-// Сброс прогресса курса
 const handleResetProgress = async (courseId: string) => {
-  if (!userStore.token) return
-
-  resettingId.value = courseId
+  if (!userStore.token) return;
+  resettingId.value = courseId;
   try {
-    await api.resetCourseProgress(courseId, userStore.token)
-    // Обновляем прогресс
-    await loadProgress()
+    await api.resetCourseProgress(courseId, userStore.token);
+    await loadProgress();
   } catch (err: unknown) {
-  console.error('Ошибка сброса прогресса:', getErrorMessage(err))
+    console.error("Ошибка сброса прогресса:", getErrorMessage(err));
   } finally {
-    resettingId.value = null
+    resettingId.value = null;
   }
-}
+};
 
-// Выход из аккаунта
 const handleLogout = () => {
-  userStore.logout()
-  navigateTo('/')
-}
+  userStore.logout();
+  navigateTo("/");
+};
 
-// Открытие модалки
 const openWorkoutsModal = (courseId: string) => {
-  selectedCourseId.value = courseId
-  isWorkoutsModalOpen.value = true
-}
+  selectedCourseId.value = courseId;
+  isWorkoutsModalOpen.value = true;
+};
 
 onMounted(() => {
-  loadCourses()
-})
+  loadCourses();
+});
 </script>

@@ -1,11 +1,7 @@
 <template>
-  <div class="min-h-screen bg-gray-50">
-    <div class="max-w-container mx-auto px-4 py-8">
-      <div class="mb-6">
-        <NuxtLink to="/" class="text-gray-500 hover:text-black transition text-sm">
-          ← Все курсы
-        </NuxtLink>
-      </div>
+  <div class="min-h-screen bg-white">
+    <div class="max-w-[1440px] mx-auto px-4 lg:px-[140px] pt-4 lg:pt-[20px] pb-10 lg:pb-[60px]">
+      
 
       <!-- Загрузка -->
       <div v-if="loading" class="flex justify-center py-12">
@@ -17,109 +13,144 @@
         {{ error }}
       </div>
 
-      <!-- Курс не найден -->
-      <div v-else-if="!course" class="text-center py-12">
-        <p class="text-gray-500">Курс не найден</p>
-      </div>
-
       <!-- Курс -->
-      <div v-else>
-        <h1 class="text-4xl font-bold text-gray-900 mb-4">{{ course.nameRU }}</h1>
+      <div v-else-if="course">
+        <!-- Цветной блок с названием -->
+        <div
+          class="relative overflow-hidden mb-8 w-full max-w-[1160px] h-[389px] lg:h-[310px]"
+          :style="{
+            borderRadius: '30px',
+            backgroundColor: courseColor
+          }"
+        >
+          <h1
+  class="absolute text-white font-medium z-10 left-4 lg:left-[40px] top-4 lg:top-[40px]"
+  style="font-size: 60px; line-height: 110%; max-width: 600px;"
+>
+  {{ course.nameRU }}
+</h1>
+          <img
+            :src="courseImage"
+            :alt="course.nameRU"
+            class="absolute right-0 bottom-0 object-cover w-[200px] h-[300px] lg:w-[50%] lg:h-full"
+          />
+        </div>
 
-        <div class="flex flex-wrap items-center gap-4 mb-8">
-          <span v-if="course.durationInDays" class="text-sm text-gray-500">
-            {{ course.durationInDays }} дней
-          </span>
-          <span
-            v-if="course.difficulty"
-            class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium"
-            :class="difficultyClass(course.difficulty)"
+        <!-- Подойдет для вас, если -->
+        <div v-if="course.fitting?.length" class="mb-8">
+          <h2 class="font-bold text-black mb-4 lg:mb-6" style="font-size: 28px; line-height: 32px;">
+            Подойдет для вас, если:
+          </h2>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-[10px] md:gap-[40px] w-[1160px] max-w-full mx-auto lg:mx-0">
+            <div
+              v-for="(item, index) in course.fitting"
+              :key="index"
+              class="flex items-start bg-gray-900 text-white"
+              style="padding: 20px; border-radius: 20px; gap: 15px; min-height: 141px;"
+            >
+              <span class="font-bold" style="font-size: 56px; line-height: 60px; color: #BCEC30;">
+                {{ index + 1 }}
+              </span>
+              <span style="font-size: 18px; line-height: 22px; padding-top: 10px;">
+                {{ item }}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Направления -->
+        <div v-if="course.directions?.length" class="mb-12 lg:mb-16">
+          <h2 class="font-bold text-black mb-4 lg:mb-6" style="font-size: 28px; line-height: 32px;">
+            Направления
+          </h2>
+          <div
+            class="grid grid-cols-1 md:grid-cols-3 w-[1160px] max-w-full gap-[10px] md:gap-x-[40px] md:gap-y-[10px] mx-auto lg:mx-0"
+            style="background-color: #BCEC30; border-radius: 20px; padding: 28px; min-height: 146px;"
           >
-            {{ course.difficulty }}
-          </span>
-          <span v-if="course.dailyDurationInMinutes" class="text-sm text-gray-500">
-            {{ course.dailyDurationInMinutes.from }}–{{ course.dailyDurationInMinutes.to }} мин/день
-          </span>
-        </div>
-
-        <div class="bg-white rounded-2xl shadow-md p-6 mb-8">
-          <h2 class="text-xl font-semibold text-gray-900 mb-4">Описание</h2>
-          <p class="text-gray-600 leading-relaxed">{{ course.description }}</p>
-        </div>
-
-        <div v-if="course.fitting?.length" class="bg-white rounded-2xl shadow-md p-6 mb-8">
-          <h2 class="text-xl font-semibold text-gray-900 mb-4">Подойдет для вас, если:</h2>
-          <ul class="space-y-3">
-            <li v-for="(item, index) in course.fitting" :key="index" class="flex items-start gap-3">
-              <span class="text-primary font-bold">{{ index + 1 }}.</span>
-              <span class="text-gray-600">{{ item }}</span>
-            </li>
-          </ul>
-        </div>
-
-        <div v-if="course.directions?.length" class="bg-white rounded-2xl shadow-md p-6 mb-8">
-          <h2 class="text-xl font-semibold text-gray-900 mb-4">Направления</h2>
-          <div class="flex flex-wrap gap-3">
             <span
               v-for="direction in course.directions"
               :key="direction"
-              class="inline-flex items-center px-4 py-2 rounded-full bg-gray-100 text-gray-700 text-sm"
+              class="text-black"
+              style="font-size: 18px; line-height: 22px;"
             >
-              {{ direction }}
+              ✦ {{ direction }}
             </span>
           </div>
         </div>
 
-        <div class="bg-white rounded-2xl shadow-md p-6 mb-8">
-          <button
-            @click="handleCourseAction"
-            :disabled="actionLoading"
-            class="w-full sm:w-auto px-8 py-3 rounded-full bg-primary hover:bg-primary-hover text-black font-medium transition disabled:opacity-50"
-          >
-            {{ actionLoading ? 'Загрузка...' : buttonText }}
-          </button>
-        </div>
+        <!-- Начните путь к новому телу -->
+<div
+  class="bg-white shadow-md mb-12 lg:mb-16 relative overflow-hidden w-[1160px] max-w-full mx-auto lg:mx-0"
+  style="border-radius: 30px; padding: 40px; min-height: 542px;"
+>
+  <!-- Текст и кнопка -->
+  <div class="flex flex-col relative z-10 w-full lg:w-[437px]" style="gap: 10px;">
+    <h2 class="font-bold text-black text-[32px] lg:text-[56px]" style="line-height: 1.1;">
+      Начните путь<br />к новому телу
+    </h2>
+    <ul class="list-disc pl-6 text-gray-700 text-[18px] lg:text-[24px]" style="line-height: 1.4;">
+      <li>проработка всех групп мышц</li>
+      <li>тренировка суставов</li>
+      <li>улучшение циркуляции крови</li>
+      <li>упражнения заряжают бодростью</li>
+      <li>помогают противостоять стрессам</li>
+    </ul>
+    <button
+      @click="handleCourseAction"
+      :disabled="actionLoading"
+      class="bg-primary hover:bg-primary-hover text-black font-medium transition disabled:opacity-50 w-full lg:w-[437px]"
+      style="height: 52px; border-radius: 46px; font-size: 16px;"
+    >
+      {{ actionLoading ? 'Загрузка...' : buttonText }}
+    </button>
+  </div>
 
-        <!-- Тренировки (только если курс добавлен) -->
-        <div v-if="isCourseAdded" class="bg-white rounded-2xl shadow-md p-6">
-          <h2 class="text-xl font-semibold text-gray-900 mb-4">Тренировки</h2>
-
-          <div v-if="workoutsLoading" class="text-gray-500">Загрузка тренировок...</div>
-
-          <ul v-else class="space-y-3">
-            <li
-              v-for="(workout, index) in workouts"
-              :key="workout._id"
-              class="flex items-center justify-between py-3 border-b border-gray-100 last:border-0"
-            >
-              <div class="flex items-center gap-3">
-                <span class="w-6 h-6 rounded-full bg-primary text-black flex items-center justify-center text-sm font-medium">
-                  {{ index + 1 }}
-                </span>
-                <span class="text-gray-700">{{ workout.name }}</span>
-              </div>
-              <NuxtLink
-                :to="`/training/${workout._id}?courseId=${course._id}`"
-                class="text-primary hover:text-primary-hover font-medium text-sm transition"
-              >
-                Начать →
-              </NuxtLink>
-            </li>
-          </ul>
-        </div>
+  <!-- Бегун и линия -->
+<div
+  class="relative lg:absolute lg:right-0 lg:top-[50%] lg:translate-y-[-50%] mt-4 lg:mt-0"
+  style="width: 670px; height: 542px;"
+>
+  <!-- Зелёная линия (дуга) -->
+  <img
+    src="~/assets/images/line.png"
+    alt=""
+    class="absolute z-[1] object-contain"
+    style="
+      width: 670px;
+      height: 391px;
+      left: 5px;
+      top: 70%;
+      transform: translateY(-50%) rotate(-12.38deg);
+    "
+  />
+  <!-- Бегун -->
+  <img
+    src="~/assets/images/runner.png"
+    alt=""
+    class="absolute z-[2] object-contain"
+    style="
+      width: 487px;
+      height: 542px;
+      right: 0;
+      top: 0;
+      transform: rotate(2.99deg);
+    "
+  />
+</div>
+</div>
       </div>
     </div>
 
-    <!-- Модальное окно авторизации -->
+    <!-- Модалка авторизации -->
     <AuthModal v-model="isAuthModalOpen" @success="handleAuthSuccess" />
   </div>
 </template>
 
 <script setup lang="ts">
 import { getErrorMessage } from '~/utils/errors'
-import { computed, ref, onMounted, watch } from 'vue'
+import { computed, ref, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
-import type { Course, Workout } from '~/types/api'
+import type { Course } from '~/types/api'
 import { useUserStore } from '~/stores/user'
 import AuthModal from '~/components/auth/AuthModal.vue'
 
@@ -128,9 +159,7 @@ const userStore = useUserStore()
 const api = useApi()
 
 const course = ref<Course | null>(null)
-const workouts = ref<Workout[]>([])
 const loading = ref(true)
-const workoutsLoading = ref(false)
 const error = ref<string | null>(null)
 const isAuthModalOpen = ref(false)
 const actionLoading = ref(false)
@@ -145,14 +174,28 @@ const buttonText = computed(() => {
   return 'Добавить курс'
 })
 
-const difficultyClass = (difficulty: string) => {
+//  цвета из Figma
+const courseColor = computed(() => {
   const map: Record<string, string> = {
-    'начальный': 'bg-green-100 text-green-800',
-    'средний': 'bg-yellow-100 text-yellow-800',
-    'сложный': 'bg-red-100 text-red-800',
+    'ab1c3f': '#FFC700', // Йога — жёлтый
+    'kfpq8e': '#2491D2', // Стретчинг — синий
+    'ypox9r': '#F7A012', // Фитнес — оранжевый
+    '6i67sm': '#FF7E65', // Степ-аэробика — коралловый
+    'q02a6i': '#7D458C', // Бодифлекс — фиолетовый
   }
-  return map[difficulty] || 'bg-gray-100 text-gray-800'
-}
+  return map[course.value?._id || ''] || '#FFC700'
+})
+
+const courseImage = computed(() => {
+  const map: Record<string, string> = {
+    'ab1c3f': '/images/yoga.png',
+    'kfpq8e': '/images/stretching.png',
+    'ypox9r': '/images/fitness.png',
+    '6i67sm': '/images/step-aerobics.png',
+    'q02a6i': '/images/bodyflex.png',
+  }
+  return map[course.value?._id || ''] || '/images/yoga.png'
+})
 
 const loadCourse = async () => {
   try {
@@ -161,24 +204,10 @@ const loadCourse = async () => {
     const id = route.params.id as string
     const data = await api.getCourseById(id)
     course.value = data
-    await loadWorkouts()
   } catch (err: unknown) {
     error.value = getErrorMessage(err, 'Не удалось загрузить курс')
   } finally {
     loading.value = false
-  }
-}
-
-const loadWorkouts = async () => {
-  if (!course.value || !isCourseAdded.value || !userStore.token) return
-  try {
-    workoutsLoading.value = true
-    const data = await api.getCourseWorkouts(course.value._id, userStore.token)
-    workouts.value = data
-  } catch (err: unknown) {
-    console.error('Ошибка загрузки тренировок:', getErrorMessage(err))
-  } finally {
-    workoutsLoading.value = false
   }
 }
 
@@ -187,22 +216,18 @@ const handleCourseAction = async () => {
     isAuthModalOpen.value = true
     return
   }
-
   if (!course.value || !userStore.token) return
-
   actionLoading.value = true
   try {
     if (isCourseAdded.value) {
       await api.deleteCourse(course.value._id, userStore.token)
-      workouts.value = []
     } else {
       await api.addCourse(course.value._id, userStore.token)
     }
     const user = await api.getMe(userStore.token)
     userStore.setUser(user)
-    await loadWorkouts()
   } catch (err: unknown) {
-    console.error('Ошибка:', getErrorMessage(err))
+    console.error(getErrorMessage(err))
   } finally {
     actionLoading.value = false
   }
@@ -214,17 +239,11 @@ const handleAuthSuccess = async () => {
       await api.addCourse(course.value._id, userStore.token)
       const user = await api.getMe(userStore.token)
       userStore.setUser(user)
-      await loadWorkouts()
     } catch (err: unknown) {
-      console.error('Ошибка добавления курса:', getErrorMessage(err))
+      console.error(getErrorMessage(err))
     }
   }
 }
-
-// Следим за изменением курса
-watch(isCourseAdded, (added) => {
-  if (added) loadWorkouts()
-})
 
 onMounted(() => {
   loadCourse()

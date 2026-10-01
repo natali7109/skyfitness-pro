@@ -2,10 +2,10 @@
   <Teleport to="body">
     <div
       v-if="modelValue"
-      class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4"
+      class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4 py-10"
       @click.self="close"
     >
-      <div class="w-full max-w-md bg-white rounded-2xl shadow-xl p-8 relative">
+      <div class="w-full max-w-[360px] bg-white rounded-[30px] shadow-xl p-10 relative">
         <!-- Кнопка закрытия -->
         <button
           @click="close"
@@ -17,88 +17,73 @@
           </svg>
         </button>
 
-        <!-- Переключатель Вход / Регистрация -->
-        <div class="flex mb-8 bg-gray-100 rounded-full p-1">
-          <button
-            @click="mode = 'login'"
-            :class="[
-              'flex-1 py-2 rounded-full text-sm font-medium transition',
-              mode === 'login' ? 'bg-white shadow text-black' : 'text-gray-500'
-            ]"
-          >
-            Войти
-          </button>
-          <button
-            @click="mode = 'register'"
-            :class="[
-              'flex-1 py-2 rounded-full text-sm font-medium transition',
-              mode === 'register' ? 'bg-white shadow text-black' : 'text-gray-500'
-            ]"
-          >
-            Зарегистрироваться
-          </button>
+        <!-- Логотип -->
+        <div class="flex justify-center mb-10">
+          <img src="/images/logo.png" alt="SkyFitnessPro" class="h-8" />
         </div>
 
-        <!-- Заголовок -->
-        <h2 class="text-2xl font-bold text-gray-900 mb-6 text-center">
-          {{ mode === 'login' ? 'Вход в аккаунт' : 'Регистрация' }}
-        </h2>
-
         <!-- Форма -->
-        <form @submit.prevent="handleSubmit" class="space-y-4">
+        <form @submit.prevent="handleSubmit" class="flex flex-col gap-6">
           <!-- Email -->
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
-            <input
-              v-model="email"
-              type="email"
-              placeholder="user@example.com"
-              class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
-            />
-            <p v-if="errors.email" class="text-red-500 text-sm mt-1">{{ errors.email }}</p>
-          </div>
+          <input
+            v-model="email"
+            type="text"
+            :placeholder="mode === 'login' ? 'Логин' : 'Эл. почта'"
+            :class="[
+              'w-full h-[52px] px-5 rounded-[30px] border text-black placeholder:text-gray-400 focus:outline-none focus:border-primary transition',
+              errors.email ? 'border-red-500' : 'border-gray-200'
+            ]"
+          />
 
           <!-- Пароль -->
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">Пароль</label>
-            <input
-              v-model="password"
-              type="password"
-              placeholder="••••••••"
-              class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
-            />
-            <p v-if="errors.password" class="text-red-500 text-sm mt-1">{{ errors.password }}</p>
-          </div>
+          <input
+            v-model="password"
+            type="password"
+            placeholder="Пароль"
+            :class="[
+              'w-full h-[52px] px-5 rounded-[30px] border text-black placeholder:text-gray-400 focus:outline-none focus:border-primary transition',
+              errors.password ? 'border-red-500' : 'border-gray-200'
+            ]"
+          />
 
-          <!-- Подтверждение пароля (только для регистрации) -->
-          <div v-if="mode === 'register'">
-            <label class="block text-sm font-medium text-gray-700 mb-1">Подтвердите пароль</label>
-            <input
-              v-model="confirmPassword"
-              type="password"
-              placeholder="••••••••"
-              class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
-            />
-            <p v-if="errors.confirmPassword" class="text-red-500 text-sm mt-1">{{ errors.confirmPassword }}</p>
-          </div>
+          <!-- Подтверждение пароля (только регистрация) -->
+          <input
+            v-if="mode === 'register'"
+            v-model="confirmPassword"
+            type="password"
+            placeholder="Повторите пароль"
+            :class="[
+              'w-full h-[52px] px-5 rounded-[30px] border text-black placeholder:text-gray-400 focus:outline-none focus:border-primary transition',
+              errors.confirmPassword ? 'border-red-500' : 'border-gray-200'
+            ]"
+          />
 
-          <!-- Сообщение об ошибке от API -->
-          <div v-if="apiError" class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm">
+          <!-- Ошибка API -->
+          <p v-if="apiError" class="text-red-500 text-sm text-center -mt-2">
             {{ apiError }}
-          </div>
+          </p>
 
-          <!-- Сообщение об успехе -->
-          <div v-if="successMessage" class="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-lg text-sm">
+          <!-- Успех -->
+          <p v-if="successMessage" class="text-green-600 text-sm text-center -mt-2">
             {{ successMessage }}
-          </div>
+          </p>
 
-          <!-- Кнопка -->
+          <!-- Кнопка «Войти» / «Зарегистрироваться» -->
           <button
             type="submit"
             :disabled="loading"
-            class="w-full py-3 rounded-full bg-primary hover:bg-primary-hover text-black font-medium transition disabled:opacity-50 disabled:cursor-not-allowed"
+            class="w-full h-[52px] rounded-[30px] bg-primary hover:bg-primary-hover text-black font-medium transition disabled:opacity-50"
           >
             {{ loading ? 'Загрузка...' : (mode === 'login' ? 'Войти' : 'Зарегистрироваться') }}
+          </button>
+
+          <!-- Кнопка переключения -->
+          <button
+            type="button"
+            @click="switchMode"
+            class="w-full h-[52px] rounded-[30px] border-2 border-black text-black font-medium hover:bg-gray-50 transition"
+          >
+            {{ mode === 'login' ? 'Зарегистрироваться' : 'Войти' }}
           </button>
         </form>
       </div>
@@ -107,9 +92,10 @@
 </template>
 
 <script setup lang="ts">
-import { getErrorMessage } from '~/utils/errors'
 import { ref, reactive, watch } from 'vue'
 import { useUserStore } from '~/stores/user'
+import { validateEmail, validatePassword } from '~/utils/validators'
+import { getErrorMessage } from '~/utils/errors'
 
 const props = defineProps<{
   modelValue: boolean
@@ -137,13 +123,10 @@ const errors = reactive({
   confirmPassword: '',
 })
 
-// Закрытие модалки
-const close = () => {
-  emit('update:modelValue', false)
-  resetForm()
-}
+watch(() => props.modelValue, (val) => {
+  if (val) resetForm()
+})
 
-// Сброс формы
 const resetForm = () => {
   email.value = ''
   password.value = ''
@@ -155,30 +138,15 @@ const resetForm = () => {
   successMessage.value = null
 }
 
-// Сброс при открытии
-watch(() => props.modelValue, (val) => {
-  if (val) resetForm()
-})
-
-// Валидация email
-const validateEmail = (value: string): string => {
-  if (!value) return 'Введите email'
-  const re = /^.+@.+\..+$/
-  if (!re.test(value)) return 'Введите корректный Email'
-  return ''
+const switchMode = () => {
+  mode.value = mode.value === 'login' ? 'register' : 'login'
+  errors.email = ''
+  errors.password = ''
+  errors.confirmPassword = ''
+  apiError.value = null
+  successMessage.value = null
 }
 
-// Валидация пароля
-const validatePassword = (value: string): string => {
-  if (!value) return 'Введите пароль'
-  if (value.length < 6) return 'Пароль должен содержать не менее 6 символов'
-  const specialChars = value.match(/[!@#$%^&*(),.?":{}|<>]/g) || []
-  if (specialChars.length < 2) return 'Пароль должен содержать не менее 2 специальных символов'
-  if (!/[A-Z]/.test(value)) return 'Пароль должен содержать хотя бы одну заглавную букву'
-  return ''
-}
-
-// Валидация формы
 const validateForm = (): boolean => {
   errors.email = validateEmail(email.value)
   errors.password = validatePassword(password.value)
@@ -195,7 +163,6 @@ const validateForm = (): boolean => {
   return !errors.email && !errors.password && !errors.confirmPassword
 }
 
-// Отправка формы
 const handleSubmit = async () => {
   apiError.value = null
   successMessage.value = null
@@ -220,9 +187,13 @@ const handleSubmit = async () => {
       confirmPassword.value = ''
     }
   } catch (err: unknown) {
-  apiError.value = getErrorMessage(err, 'Произошла ошибка')
+    apiError.value = getErrorMessage(err, 'Произошла ошибка')
   } finally {
     loading.value = false
   }
+}
+
+const close = () => {
+  emit('update:modelValue', false)
 }
 </script>
