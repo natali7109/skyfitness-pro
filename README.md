@@ -73,7 +73,8 @@ skyfitness-pro/
 ✅ Тесты (Vitest)
 
 🔗 Деплой
-Ссылка на задеплоенное приложение  
+Ссылка на задеплоенное приложение 
+**https://skyfitness-pro.vercel.app** 
 
 👤 Автор
 Наталия — GitHub
