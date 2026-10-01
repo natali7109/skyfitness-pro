@@ -1,7 +1,6 @@
 <template>
   <div class="min-h-screen bg-white">
     <div class="max-w-[1440px] mx-auto px-4 lg:px-[140px] pt-4 lg:pt-[20px] pb-10 lg:pb-[60px]">
-      
 
       <!-- Загрузка -->
       <div v-if="loading" class="flex justify-center py-12">
@@ -15,24 +14,37 @@
 
       <!-- Курс -->
       <div v-else-if="course">
-        <!-- Цветной блок с названием -->
+        <!-- Цветной блок с названием (десктоп) -->
         <div
-          class="relative overflow-hidden mb-8 w-full max-w-[1160px] h-[389px] lg:h-[310px]"
+          class="hidden lg:block relative overflow-hidden mb-8 w-full max-w-[1160px] h-[310px]"
           :style="{
             borderRadius: '30px',
             backgroundColor: courseColor
           }"
         >
           <h1
-  class="absolute text-white font-medium z-10 left-4 lg:left-[40px] top-4 lg:top-[40px]"
-  style="font-size: 60px; line-height: 110%; max-width: 600px;"
->
-  {{ course.nameRU }}
-</h1>
+            class="absolute text-white font-medium z-10 left-[40px] top-[40px]"
+            :style="{
+              fontSize: course.nameRU.length > 10 ? '48px' : '60px',
+              lineHeight: '110%',
+              maxWidth: '600px'
+            }"
+          >
+            {{ course.nameRU }}
+          </h1>
           <img
             :src="courseImage"
             :alt="course.nameRU"
-            class="absolute right-0 bottom-0 object-cover w-[200px] h-[300px] lg:w-[50%] lg:h-full"
+            class="absolute right-0 bottom-0 object-cover w-[50%] h-full"
+          />
+        </div>
+
+        <!-- Картинка курса (мобильные) -->
+        <div class="block lg:hidden mb-6">
+          <img
+            :src="courseImage"
+            :alt="course.nameRU"
+            class="w-full h-auto rounded-[30px]"
           />
         </div>
 
@@ -79,65 +91,63 @@
         </div>
 
         <!-- Начните путь к новому телу -->
-<div
-  class="bg-white shadow-md mb-12 lg:mb-16 relative overflow-hidden w-[1160px] max-w-full mx-auto lg:mx-0"
-  style="border-radius: 30px; padding: 40px; min-height: 542px;"
->
-  <!-- Текст и кнопка -->
-  <div class="flex flex-col relative z-10 w-full lg:w-[437px]" style="gap: 10px;">
-    <h2 class="font-bold text-black text-[32px] lg:text-[56px]" style="line-height: 1.1;">
-      Начните путь<br />к новому телу
-    </h2>
-    <ul class="list-disc pl-6 text-gray-700 text-[18px] lg:text-[24px]" style="line-height: 1.4;">
-      <li>проработка всех групп мышц</li>
-      <li>тренировка суставов</li>
-      <li>улучшение циркуляции крови</li>
-      <li>упражнения заряжают бодростью</li>
-      <li>помогают противостоять стрессам</li>
-    </ul>
-    <button
-      @click="handleCourseAction"
-      :disabled="actionLoading"
-      class="bg-primary hover:bg-primary-hover text-black font-medium transition disabled:opacity-50 w-full lg:w-[437px]"
-      style="height: 52px; border-radius: 46px; font-size: 16px;"
-    >
-      {{ actionLoading ? 'Загрузка...' : buttonText }}
-    </button>
-  </div>
+        <div
+          class="bg-white shadow-md mb-12 lg:mb-16 relative overflow-hidden w-full lg:w-[1160px] max-w-full mx-auto lg:mx-0"
+          style="border-radius: 30px; padding: 40px 20px 20px 20px;"
+        >
+          <!-- Текст и кнопка -->
+          <div class="flex flex-col relative z-10 w-full lg:w-[437px]" style="gap: 10px;">
+            <h2 class="font-bold text-black text-[28px] lg:text-[56px]" style="line-height: 1.1;">
+              Начните путь<br />к новому телу
+            </h2>
+            <ul class="list-disc pl-6 text-gray-700 text-[16px] lg:text-[24px]" style="line-height: 1.4;">
+              <li>проработка всех групп мышц</li>
+              <li>тренировка суставов</li>
+              <li>улучшение циркуляции крови</li>
+              <li>упражнения заряжают бодростью</li>
+              <li>помогают противостоять стрессам</li>
+            </ul>
+            <button
+              @click="handleCourseAction"
+              :disabled="actionLoading"
+              class="bg-primary hover:bg-primary-hover text-black font-medium transition disabled:opacity-50 w-full lg:w-[437px]"
+              style="height: 52px; border-radius: 46px; font-size: 16px;"
+            >
+              {{ actionLoading ? 'Загрузка...' : buttonText }}
+            </button>
+          </div>
 
-  <!-- Бегун и линия -->
-<div
-  class="relative lg:absolute lg:right-0 lg:top-[50%] lg:translate-y-[-50%] mt-4 lg:mt-0"
-  style="width: 670px; height: 542px;"
->
-  <!-- Зелёная линия (дуга) -->
-  <img
-    src="~/assets/images/line.png"
-    alt=""
-    class="absolute z-[1] object-contain"
-    style="
-      width: 670px;
-      height: 391px;
-      left: 5px;
-      top: 70%;
-      transform: translateY(-50%) rotate(-12.38deg);
-    "
-  />
-  <!-- Бегун -->
-  <img
-    src="~/assets/images/runner.png"
-    alt=""
-    class="absolute z-[2] object-contain"
-    style="
-      width: 487px;
-      height: 542px;
-      right: 0;
-      top: 0;
-      transform: rotate(2.99deg);
-    "
-  />
-</div>
-</div>
+          <!-- Бегун и линия (только для десктопа) -->
+          <div
+            class="hidden lg:block absolute lg:right-0 lg:top-[50%] lg:translate-y-[-50%]"
+            style="width: 670px; height: 542px;"
+          >
+            <img
+              src="~/assets/images/line.png"
+              alt=""
+              class="absolute z-[1] object-contain"
+              style="
+                width: 670px;
+                height: 391px;
+                left: 5px;
+                top: 70%;
+                transform: translateY(-50%) rotate(-12.38deg);
+              "
+            />
+            <img
+              src="~/assets/images/runner.png"
+              alt=""
+              class="absolute z-[2] object-contain"
+              style="
+                width: 487px;
+                height: 542px;
+                right: 0;
+                top: 0;
+                transform: rotate(2.99deg);
+              "
+            />
+          </div>
+        </div>
       </div>
     </div>
 
@@ -174,7 +184,7 @@ const buttonText = computed(() => {
   return 'Добавить курс'
 })
 
-//  цвета из Figma
+// Цвета из Figma
 const courseColor = computed(() => {
   const map: Record<string, string> = {
     'ab1c3f': '#FFC700', // Йога — жёлтый
