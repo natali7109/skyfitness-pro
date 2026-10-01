@@ -1,12 +1,7 @@
 <template>
   <div class="min-h-screen bg-white">
     <div class="max-w-[1440px] mx-auto px-4 lg:px-[140px] pt-4 lg:pt-[20px] pb-10 lg:pb-[60px]">
-      <!-- Хлебные крошки -->
-      <div class="mb-6">
-        <NuxtLink to="/" class="text-gray-500 hover:text-black transition text-sm">
-          ← Все курсы
-        </NuxtLink>
-      </div>
+      
 
       <!-- Загрузка -->
       <div v-if="loading" class="flex justify-center py-12">
@@ -29,11 +24,11 @@
           }"
         >
           <h1
-            class="absolute text-white font-bold z-10 left-4 lg:left-[40px] top-4 lg:top-[40px]"
-            style="font-size: 32px; line-height: 38px;"
-          >
-            {{ course.nameRU }}
-          </h1>
+  class="absolute text-white font-medium z-10 left-4 lg:left-[40px] top-4 lg:top-[40px]"
+  style="font-size: 60px; line-height: 110%; max-width: 600px;"
+>
+  {{ course.nameRU }}
+</h1>
           <img
             :src="courseImage"
             :alt="course.nameRU"
@@ -69,9 +64,9 @@
             Направления
           </h2>
           <div
-  class="grid grid-cols-1 md:grid-cols-3 w-[1160px] max-w-full gap-[10px] md:gap-x-[40px] md:gap-y-[10px] mx-auto lg:mx-0"
-  style="background-color: #BCEC30; border-radius: 20px; padding: 28px; min-height: 146px;"
->
+            class="grid grid-cols-1 md:grid-cols-3 w-[1160px] max-w-full gap-[10px] md:gap-x-[40px] md:gap-y-[10px] mx-auto lg:mx-0"
+            style="background-color: #BCEC30; border-radius: 20px; padding: 28px; min-height: 146px;"
+          >
             <span
               v-for="direction in course.directions"
               :key="direction"
@@ -84,42 +79,62 @@
         </div>
 
         <!-- Начните путь к новому телу -->
-<div class="bg-white shadow-md mb-12 lg:mb-16 relative overflow-hidden w-[1160px] max-w-full mx-auto lg:mx-0"
-  style="border-radius: 30px; padding: 40px;"
+<div
+  class="bg-white shadow-md mb-12 lg:mb-16 relative overflow-hidden w-[1160px] max-w-full mx-auto lg:mx-0"
+  style="border-radius: 30px; padding: 40px; min-height: 542px;"
 >
   <!-- Текст и кнопка -->
-<div class="flex flex-col relative z-10 w-full lg:w-[437px]" style="gap: 10px;">
-  <h2 class="font-bold text-black text-[32px] lg:text-[56px]" style="line-height: 1.1;">
-    Начните путь<br />к новому телу
-  </h2>
-  <ul class="list-disc pl-6 text-gray-700 text-[18px] lg:text-[24px]" style="line-height: 1.4;">
-    <li>проработка всех групп мышц</li>
-    <li>тренировка суставов</li>
-    <li>улучшение циркуляции крови</li>
-    <li>упражнения заряжают бодростью</li>
-    <li>помогают противостоять стрессам</li>
-  </ul>
-  <button
-    @click="handleCourseAction"
-    :disabled="actionLoading"
-    class="bg-primary hover:bg-primary-hover text-black font-medium transition disabled:opacity-50 w-full lg:w-[437px]"
-    style="height: 52px; border-radius: 46px; font-size: 16px;"
-  >
-    {{ actionLoading ? 'Загрузка...' : buttonText }}
-  </button>
-</div>
+  <div class="flex flex-col relative z-10 w-full lg:w-[437px]" style="gap: 10px;">
+    <h2 class="font-bold text-black text-[32px] lg:text-[56px]" style="line-height: 1.1;">
+      Начните путь<br />к новому телу
+    </h2>
+    <ul class="list-disc pl-6 text-gray-700 text-[18px] lg:text-[24px]" style="line-height: 1.4;">
+      <li>проработка всех групп мышц</li>
+      <li>тренировка суставов</li>
+      <li>улучшение циркуляции крови</li>
+      <li>упражнения заряжают бодростью</li>
+      <li>помогают противостоять стрессам</li>
+    </ul>
+    <button
+      @click="handleCourseAction"
+      :disabled="actionLoading"
+      class="bg-primary hover:bg-primary-hover text-black font-medium transition disabled:opacity-50 w-full lg:w-[437px]"
+      style="height: 52px; border-radius: 46px; font-size: 16px;"
+    >
+      {{ actionLoading ? 'Загрузка...' : buttonText }}
+    </button>
+  </div>
 
- <!-- Бегун и линия -->
-<div class="relative lg:absolute lg:right-0 lg:bottom-0 lg:h-full lg:w-[604px] mt-4 lg:mt-0 overflow-hidden">
+  <!-- Бегун и линия -->
+<div
+  class="relative lg:absolute lg:right-0 lg:top-[50%] lg:translate-y-[-50%] mt-4 lg:mt-0"
+  style="width: 670px; height: 542px;"
+>
+  <!-- Зелёная линия (дуга) -->
   <img
     src="~/assets/images/line.png"
     alt=""
-    class="hidden lg:block absolute w-[600px] h-auto right-[0px] top-[80px] z-[1]"
+    class="absolute z-[1] object-contain"
+    style="
+      width: 670px;
+      height: 391px;
+      left: 5px;
+      top: 70%;
+      transform: translateY(-50%) rotate(-12.38deg);
+    "
   />
+  <!-- Бегун -->
   <img
     src="~/assets/images/runner.png"
     alt=""
-    class="w-full lg:w-[550px] lg:h-[550px] object-contain lg:absolute lg:right-[20px] lg:bottom-[-50px] z-[2]"
+    class="absolute z-[2] object-contain"
+    style="
+      width: 487px;
+      height: 542px;
+      right: 0;
+      top: 0;
+      transform: rotate(2.99deg);
+    "
   />
 </div>
 </div>
@@ -159,15 +174,16 @@ const buttonText = computed(() => {
   return 'Добавить курс'
 })
 
+//  цвета из Figma
 const courseColor = computed(() => {
   const map: Record<string, string> = {
-    'ab1c3f': '#FFD748',
-    'kfpq8e': '#3B82F6',
-    'ypox9r': '#F97316',
-    '6i67sm': '#EF4444',
-    'q02a6i': '#A855F7',
+    'ab1c3f': '#FFC700', // Йога — жёлтый
+    'kfpq8e': '#2491D2', // Стретчинг — синий
+    'ypox9r': '#F7A012', // Фитнес — оранжевый
+    '6i67sm': '#FF7E65', // Степ-аэробика — коралловый
+    'q02a6i': '#7D458C', // Бодифлекс — фиолетовый
   }
-  return map[course.value?._id || ''] || '#FFD748'
+  return map[course.value?._id || ''] || '#FFC700'
 })
 
 const courseImage = computed(() => {
