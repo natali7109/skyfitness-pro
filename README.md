@@ -1,75 +1,82 @@
-# Nuxt Minimal Starter
+# SkyFitnessPro
 
-Look at the [Nuxt documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.
+Дипломный проект — онлайн-тренировки для занятий дома.
 
-## Setup
+## 📋 Описание
 
-Make sure to install dependencies:
+SkyFitnessPro — это веб-приложение для выбора и прохождения фитнес-курсов. Пользователь может просматривать курсы, регистрироваться, добавлять курсы в свой профиль и отслеживать прогресс тренировок.
+
+## 🛠️ Технологии
+
+- **Nuxt 3** — фреймворк для разработки
+- **TypeScript** — строгая типизация
+- **Tailwind CSS** — стилизация
+- **Pinia** — управление состоянием
+- **ESLint + Prettier** — качество кода
+- **Vitest** — тестирование
+
+## 🚀 Запуск
 
 ```bash
-# npm
+# Установка зависимостей
 npm install
 
-# pnpm
-pnpm install
-
-# yarn
-yarn install
-
-# bun
-bun install
-```
-
-## Development Server
-
-Start the development server on `http://localhost:3000`:
-
-```bash
-# npm
+# Запуск dev-сервера
 npm run dev
 
-# pnpm
-pnpm dev
-
-# yarn
-yarn dev
-
-# bun
-bun run dev
-```
-
-## Production
-
-Build the application for production:
-
-```bash
-# npm
+# Сборка для продакшена
 npm run build
 
-# pnpm
-pnpm build
+# Запуск тестов
+npm run test
+Открой http://localhost:3000.
 
-# yarn
-yarn build
+📁 Структура проекта
+text
+skyfitness-pro/
+├── assets/
+│   └── images/          # Изображения (линия, бегун)
+├── components/
+│   ├── auth/            # Компоненты авторизации (AuthModal)
+│   ├── common/          # Общие компоненты (AppHeader)
+│   └── course/          # Компоненты курсов (WorkoutsModal)
+├── composables/         # Кастомные композаблы (useApi)
+├── pages/               # Страницы приложения
+│   ├── courses/         # Страница курса
+│   ├── training/        # Страница тренировки
+│   ├── index.vue        # Главная
+│   ├── login.vue        # Авторизация
+│   └── profile.vue      # Профиль
+├── public/
+│   └── images/          # Картинки курсов
+├── stores/              # Pinia-хранилища (user, courses, progress)
+├── tests/               # Тесты (Vitest)
+├── types/               # TypeScript-типы
+└── utils/               # Утилиты (errors, mockCourses, validators)
+📋 Функционал
+✅ Просмотр списка курсов
 
-# bun
-bun run build
-```
+✅ Регистрация и авторизация
 
-Locally preview production build:
+✅ Добавление и удаление курсов
 
-```bash
-# npm
-npm run preview
+✅ Просмотр тренировок и упражнений
 
-# pnpm
-pnpm preview
+✅ Заполнение прогресса
 
-# yarn
-yarn preview
+✅ Сброс прогресса
 
-# bun
-bun run preview
-```
+✅ Модальное окно выбора тренировки
 
-Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
+✅ Валидация форм
+
+✅ Тесты (Vitest)
+
+🔗 Деплой
+Ссылка на задеплоенное приложение  
+
+👤 Автор
+Наталия — GitHub
+
+📄 API
+Документация API: webdev-hw-api
