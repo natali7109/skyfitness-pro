@@ -23,48 +23,62 @@
         </div>
 
         <!-- Форма -->
-        <form @submit.prevent="handleSubmit" class="flex flex-col gap-6">
+        <form @submit.prevent="handleSubmit" class="flex flex-col gap-4">
           <!-- Email -->
-          <input
-            v-model="email"
-            type="text"
-            :placeholder="mode === 'login' ? 'Логин' : 'Эл. почта'"
-            :class="[
-              'w-full h-[52px] px-5 rounded-[30px] border text-black placeholder:text-gray-400 focus:outline-none focus:border-primary transition',
-              errors.email ? 'border-red-500' : 'border-gray-200'
-            ]"
-          />
+          <div>
+            <input
+              v-model="email"
+              type="text"
+              :placeholder="mode === 'login' ? 'Логин' : 'Эл. почта'"
+              :class="[
+                'w-full h-[52px] px-5 rounded-[30px] border text-black placeholder:text-gray-400 focus:outline-none focus:border-primary transition',
+                errors.email ? 'border-red-500' : 'border-gray-200'
+              ]"
+            />
+            <p v-if="errors.email" class="text-red-500 text-sm mt-1 px-5">
+              {{ errors.email }}
+            </p>
+          </div>
 
           <!-- Пароль -->
-          <input
-            v-model="password"
-            type="password"
-            placeholder="Пароль"
-            :class="[
-              'w-full h-[52px] px-5 rounded-[30px] border text-black placeholder:text-gray-400 focus:outline-none focus:border-primary transition',
-              errors.password ? 'border-red-500' : 'border-gray-200'
-            ]"
-          />
+          <div>
+            <input
+              v-model="password"
+              type="password"
+              placeholder="Пароль"
+              :class="[
+                'w-full h-[52px] px-5 rounded-[30px] border text-black placeholder:text-gray-400 focus:outline-none focus:border-primary transition',
+                errors.password ? 'border-red-500' : 'border-gray-200'
+              ]"
+            />
+            <p v-if="errors.password" class="text-red-500 text-sm mt-1 px-5">
+              {{ errors.password }}
+            </p>
+          </div>
 
           <!-- Подтверждение пароля (только регистрация) -->
-          <input
-            v-if="mode === 'register'"
-            v-model="confirmPassword"
-            type="password"
-            placeholder="Повторите пароль"
-            :class="[
-              'w-full h-[52px] px-5 rounded-[30px] border text-black placeholder:text-gray-400 focus:outline-none focus:border-primary transition',
-              errors.confirmPassword ? 'border-red-500' : 'border-gray-200'
-            ]"
-          />
+          <div v-if="mode === 'register'">
+            <input
+              v-model="confirmPassword"
+              type="password"
+              placeholder="Повторите пароль"
+              :class="[
+                'w-full h-[52px] px-5 rounded-[30px] border text-black placeholder:text-gray-400 focus:outline-none focus:border-primary transition',
+                errors.confirmPassword ? 'border-red-500' : 'border-gray-200'
+              ]"
+            />
+            <p v-if="errors.confirmPassword" class="text-red-500 text-sm mt-1 px-5">
+              {{ errors.confirmPassword }}
+            </p>
+          </div>
 
-          <!-- Ошибка API -->
-          <p v-if="apiError" class="text-red-500 text-sm text-center -mt-2">
+          <!-- Общая ошибка API (если не привязалась к полю) -->
+          <p v-if="apiError" class="text-red-500 text-sm text-center">
             {{ apiError }}
           </p>
 
           <!-- Успех -->
-          <p v-if="successMessage" class="text-green-600 text-sm text-center -mt-2">
+          <p v-if="successMessage" class="text-green-600 text-sm text-center">
             {{ successMessage }}
           </p>
 
@@ -187,7 +201,16 @@ const handleSubmit = async () => {
       confirmPassword.value = ''
     }
   } catch (err: unknown) {
-    apiError.value = getErrorMessage(err, 'Произошла ошибка')
+    const message = getErrorMessage(err, 'Произошла ошибка')
+
+    // Показываем точный текст из API — привязываем к нужному полю
+    if (message.includes('email') || message.includes('Email') || message.includes('почт')) {
+      errors.email = message
+    } else if (message.includes('парол') || message.includes('Парол')) {
+      errors.password = message
+    } else {
+      apiError.value = message
+    }
   } finally {
     loading.value = false
   }
